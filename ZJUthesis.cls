@@ -188,7 +188,7 @@
 
 % 定理，假设，定义，证明
 \newtheoremstyle{ZJUtheorem}
-   {9pt}{9pt}{\ttfamily}{0pt}{\lishu}{：}{0pt}{}
+   {9pt}{9pt}{\ttfamily}{0pt}{\kaishu}{：}{0pt}{}
 \theoremstyle{ZJUtheorem}
 \newtheorem{hypo}{假设~}[chapter]
 \newtheorem{defin}{定义~}[chapter]
