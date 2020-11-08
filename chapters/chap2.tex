@@ -53,7 +53,7 @@ CBOW模型：此方法将每个单词的上下文作为输入，并尝试预测�
 \begin{figure}[htbp]
   \centering
   \includegraphics[scale=0.15]{./images/skip.jpg}
-  \caption{skip}
+  \caption{skip-gram}
   \label{fig:skip}
 \end{figure}
 
@@ -70,3 +70,22 @@ RNN有一个“内存”，可以记住有关已计算内容的所有信息。�
 因为它在所有输入或隐藏层上执行相同的任务以产生输出，与其他神经网络不同，这降低了参数的复杂性。
 RNN通过为所有层提供相同的权重和偏差将独立激活转换为相关激活，
 从而通过将每个输出作为下一个隐藏层的输入来降低增加参数的复杂性并存储每个先前的输出。
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[scale=0.5]{./images/rnn.jpg}
+  \caption{RNN}
+  \label{fig:rnn}
+\end{figure}
+
+上图\ref{fig:rnn}显示了将RNN 展开为完整的网络,rnn可以被我们展开为我们想要的任意层数。例如，
+如果我们关心的序列是5个单词的句子，则该网络将展开为5层神经网络，每个单词一层。对于上图具体来说，
+$x_{t}$是时刻t的输入，例如，$x_{1}$ 可以是与句子的第二个单词相对应的one-hot向量。
+$s_{t}$是时刻t的隐藏状态，这是网络的“记忆”，$s_{t}$根据先前的隐藏状态和当前步骤的输入来计算
+
+\begin{equation}
+  s_{t}=f\left(U x_{t}+W s_{t-1}\right)
+  \end{equation}
+
+该函数f通常是诸如tanh或ReLU之类的非线性函数,$s_{-1}$计算第一个隐藏状态所需的，通常初始化为全零。
+$o_{t}$是时刻t的输出,例如，如果我们想预测句子中的下一个单词，那么它将是整个词汇表中概率的向量。o_t = \ mathrm {softmax}（Vs_t）。
