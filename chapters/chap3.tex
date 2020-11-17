@@ -127,8 +127,22 @@ CNN
     由于卷积核卷积操作得到的结果是长条状，因此本文采用k-max pooling池化方法，k是超参数，设置为4.经过池化层处理后，得到4×64的特征矩阵作为lstm层的输入。
   
     5)lstm层
-  直观上，文本分类是顺序信息处理的过程。但是，从卷积神经网络以并行方式获得的特征序列不包含序列信息，LSTM专为顺序建模而设计，可以进一步从CNN获得的特征序列中提取上下文信息
-  
+
+  直观上，文本分类是顺序信息处理的过程。但是，从卷积神经网络以并行方式获得的特征序列不包含序列信息，LSTM专为顺序建模而设计，
+  可以进一步从CNN获得的特征序列中提取上下文信息,lstm内部核心计算过程如下：
+  \begin{equation}
+  f_{t}=σ(W_{f}\cdot[h_{t-1},x_t]+b_{f})
+  \end{equation}
+  \begin{equation}
+    C_{t}=f_{t} * C_{t-1}+i_{t} * \tilde{C}_{t}
+    \end{equation} 
+    \begin{equation}
+      o_{t}=\sigma\left(W_{o}\left[h_{t-1}, x_{t}\right]+b_{o}\right)
+    \end{equation} 
+    \begin{equation}
+      h_{t}=o_{t} * \tanh \left(C_{t}\right)
+    \end{equation}
+    其中，$x_t$为从池化层输入的变量，其他字符代表的是lstm内部计算的中间过程变量不再赘述，得到的结果$x_t$被输入到下一层
   6)优化层与决策层
 
 
