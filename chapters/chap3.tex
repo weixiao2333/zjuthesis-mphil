@@ -183,12 +183,53 @@ CNN在许多自然语言处理任务中都很有效，常规的CNN不可避免�
 因此每一个需要匹配系统内服务的用户输入的句子就构成了一个32×256的二维矩阵E=[$e_{1}$,$e_{2}$,\dots,$e_{32}$],
 其中$e_{i}$=[$e_{i1}$,$e_{i2}$,\dots,$e_{i256}$]是一个中文词经过word2vec处理的向量表示。
 
-2)可转换卷积层
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[scale=0.5]{./images/tansconv.jpg}
+  \caption{接口分类模型中的transformable conv层}
+  \label{fig:tansconv}
+\end{figure}
 
+2)可转换卷积层
+对于传统CNN的卷积核大小是固定，卷积核在对输入图像扫描过程中每一次卷积操作的范围是固定的，如图\ref{fig:tansconv}的左图所示，一次普通的卷积运算可以用以下公式表示：
+\begin{equation}
+  y=\mathbf{w}\mathbf{x}
+  \end{equation}
+  将上式展开计算卷积核中每一个元素，公式被转换为：
+  \begin{equation}
+    \mathbf{y}\left(p_{0}\right)=\sum_{p_{i} \in \mathbf{C}} \mathbf{w}\left(p_{i}\right) \cdot \mathbf{x}\left(p_{0}+p_{i}\right)
+    \end{equation}
+其中，C为本次卷积核采样的全集，$p_{0}$是卷积运算后本次卷积在结果特征图中的位置，$p_{i}$枚举了本次卷积核采样的全集中的所有位置，并且
+表示与$p_{0}$的距离。
+在可转换卷积（transformable convolution）中，一次卷积运算的采样全集C被分为两部分，分别用$\mathbf{D}_{c} \subset \mathbf{C}$和
+$\mathbf{S}_{c} \subset \mathbf{C}S$来表示，$\mathbf{D}_{c}$是与当前输入特征相关的动态位置偏移信息，$\mathbf{S}_{c}$是训练时得到的
+由全局觉得的静态位置偏移信息。然后这两部分在计算时分别被加上不同的位置偏移值$\Delta p_{i}^{\mathbf{D}_{c}}$和$\Delta p_{i}^{\mathbf{S}_{c}}$,
+这样卷积的计算公式就变成了：
+\begin{equation}
+  \mathbf{y}\left(p_{0}\right)= \sum_{p_{i} \in \mathbf{D}_{c}} \mathbf{w}\left(p_{i}\right) \cdot \mathbf{x}\left(p_{0}+p_{i}+\Delta p_{i}^{\mathbf{D}_{c}}\right) +\sum_{p_{i} \in \mathbf{S}_{c}} \mathbf{w}\left(p_{i}\right) \cdot \mathbf{x}\left(p_{0}+p_{i}+\Delta p_{i}^{\mathbf{S}_{c}}\right)
+\end{equation}
+现在，$\mathbf{D}_{c}$和$\mathbf{S}_{c}$的引入，卷积核的采样位置能够做到动态的变化，实现了重新分布，而不是像以前一样是固定的矩形。
+考虑到$\Delta p_{i}^{\mathbf{D}_{c}}$和$\Delta p_{i}^{\mathbf{S}_{c}}$往往是小数，因此$\mathbf{x}()$的计算采用线性插值的方法：
+\begin{equation}
+\mathbf{x}(p)=\sum_{q} K(p, q) \cdot \mathbf{x}(q)
+\end{equation}
+这里p代表$p_{0}+p_{i}+\Delta p_{i}^{\mathbf{D}_{c}}$或者$p_{0}+p_{i}+\Delta p_{i}^{\mathbf{S}_{c}}$,q枚举了输入矩阵的所有位置，
+K是线性插值运算的核：
+\begin{equation}
+K(p, q)=\max (0,1-|p-q|)
+\end{equation}
+图\ref{fig:tansconv}显示了可变换卷积的机制，顶部的动态位置偏差$\Delta p_{i}^{\mathbf{D}_{c}}$是通过一个普通的卷积层从当前输入序列中计算得到的，
+其值被添加到$\mathbf{D}_{c}$中的采样位置。 由于它们是从输入计算生成的，因此它们的值会根据当前特征动态变化，以适应当前的转换模式。 
+底部的静态偏差$\Delta p_{i}^{\mathbf{S}_{c}}$是变量，在训练阶段通过反向传播进行更新，并在预测时保持不变，因此，静态偏差描述了特征的全局分布。
+共设置了128个卷积核，宽度与词向量长度一致，高度分为[2,3,4]不等，选用ReLU作为非线性激活函数，本层结束将得到128个大小不一的长条状feature maps.
 
 
 3)可转换池化层
 
+
 4)lstm层
 
 5)优化层与决策层
+
+\section{基于BiLSTM-attention-CRF的参数填充模型}
+找到匹配的服务以后，在服务执行前需要从用户的输入语句提取出必要的执行参数，这可以被看作命名实体识别序列标注问题。
