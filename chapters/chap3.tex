@@ -239,4 +239,70 @@ K(p, q)=\max (0,1-|p-q|)
 对于许多序列标记任务，访问过去（左）和将来（右）上下文都是有帮助的，但是，LSTM的隐藏状态$h_t$仅从过去获取信息，对未来一无所知。 
 双向LSTM（BLSTM）基本思想是将每个序列向前和向后呈现为两个单独的隐藏状态，以分别捕获过去和将来的信息,然后将两个隐藏状态连接起来以形成最终输出,因此本模型特征提取部分主要依赖BLSTM。
 同时我们选择条件随机场作为解码器，CRF考虑邻域中标记之间的相关性，并针对给定输入语句联合解码得到最佳标记链。
+综上所述本节采用引入字向量的BiLSTM-attention-CRF模型\ref{fig:blstm-att-crf}解决参数填充问题，下面将详细介绍该模型：
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[scale=0.5]{./images/blstm-att-crf.jpg}
+  \caption{参数填充模型}
+  \label{fig:blstm-att-crf}
+\end{figure}
+
+1)输入层与embedding层
+
+与前两个模型一致，首先，通过结巴分词工具得到词序列完成输入层的工作。本模型除了词嵌入处理外，引入了字向量。设
+$\mathbf{e}_{i}^{w}$表示用户输入语句词序列中第i个词的向量，$\mathbf{e}_{i}^{c}$指用户输入语句词序列中第i个词中所有字向量的表示，
+则embedding层第i个词向BiLSTM层输入可表示为：
+\begin{equation}
+  \mathbf{x}_{i}=[\mathbf{e}_{i}^{w} ;\mathbf{e}_{i}^{c}]
+\end{equation}
+其中，我们会单独用另一个双向LSTM(图中未标出)，输入为一句话的字向量序列，对于单词$w_i$的字向量$c_t(i,1),\dots,c_t(i,len(i))$(len(i)为词语的长度)，
+可以得到$\overrightarrow{\mathbf{h}}_{t(i, 1)}^{c}$,\dots,$\overrightarrow{\mathbf{h}}_{t(i, len(i))}^{c}$
+和$\overleftarrow{\mathbf{h}}_{t(i, 1)}^{c}$,\dots,$\overleftarrow{\mathbf{h}}_{t(i, len(i))}^{c}$ ，上式中的$\mathbf{e}_{i}^{c}$由以下公式得出：
+\begin{equation}
+  \mathbf{e}_{i}^{c}=[\overrightarrow{\mathbf{h}}_{t(i, len(i))}^{c} ; \overleftarrow{\mathbf{h}}_{t(i, 1)}^{c}]
+\end{equation}
+
+2)BiLSTM-attention层
+
+嵌入层的向量输入到双向LSTM网络中后，对每一个词$\mathbf{e}_{i}^{w}$，前向LSTM输出带有从左往右语义的向量$\overrightarrow{\mathbf{h}}_{i}$,
+后向LSTM输出带有从右往左语义的向量$\overleftarrow{\mathbf{h}}_{i}$,我们将这两个向量拼接得到$\mathbf{h}_{i}=[\overrightarrow{\mathbf{h}}_{i} ;\overleftarrow{\mathbf{h}}_{i}]$
+并对$\mathbf{h}_{i}$做attention处理。
+attention层主要运算工作是计算词与词之间的语义相似的，这里代表着一个词$\mathbf{e}_{i}^{w}$的向量便是$\mathbf{h}_{i}$，则词i与词j之间的attention权重$α_{i,j}$可由下式得到：
+\begin{equation}
+\alpha_{t, j}=\frac{\exp \left(\operatorname{score}\left(\mathbf{h}_{i}, \mathbf{h}_{j}\right)\right)}{\sum_{k} \exp \left(\operatorname{score}\left(\mathbf{h}_{i}, \mathbf{x}_{k}\right)\right)}
+\end{equation}
+\begin{equation}
+  \operatorname{score}(\mathbf{h}_{i}, \mathbf{h}_{j}))=\tanh \left(\mathbf{W}_{a}\left[\mathbf{h}_{i} ; \mathbf{j}_{j}\right]\right)
+\end{equation}
+attention权重由带有参数$\mathbf{W}_{a}$的感知器计算得到，以此来表示在理解目前词i时应该放多少注意力在词j上：
+\begin{equation}
+  \mathbf{g}_{i}=\sum_{j=1}^{N} \alpha_{i, j} \mathbf{h}_{j}
+\end{equation}
+于是我们得到了拥有全局视野的词i的向量表示$\mathbf{g}_{i}$,将它与$\mathbf{h}_{i}$拼接得到向量$\mathbf{a}_{i}=[\mathbf{g}_{i} ;\mathbf{h}_{i}]$作为CRF层的输入。
+(这里选用字母a的原因时做了attention处理)
+
+3)CRF层
+
+在模型的最后，添加了CRF层以对所有可能的标记路径中的最佳标记进行解码。
+设$\mathbf{P}$是分数矩阵，矩阵的元素$P_{i,j}$是句子中第i个单词被标记为第j个标签的分数。 
+同时引入一个标记转换矩阵$\mathbf{T}$，其中$T_{i,j}$表示上下连续两个单词中从上一个被标记i到下一个被标记j的转换分数，
+而$T_{0,j}$表示从标记j作为开始的分数，该转换矩阵将做为模型的参数被训练。 
+句子$\mathbf{X}$的被标记为$\mathbf{X}=(y_1,y_2,\dots,y_n)$的得分可由下式得出：
+\begin{equation}
+  s(\mathbf{X}, \mathbf{y})=\sum_{i=1}^{n}\left(T_{y_{i-1}, y_{i}}+P_{i, y_{i}}\right)
+\end{equation}
+之后可以通过softmax函数推导出$\mathbf{X}$的被标记为$\mathbf{X}=(y_1,y_2,\dots,y_n)$的概率：
+\begin{equation}
+  p(\mathbf{y} \mid \mathbf{X})=\frac{e^{s(\mathbf{X}, \mathbf{y})}}{\sum_{\tilde{\mathbf{y}}} e^{s(\mathbf{X}, \tilde{\mathbf{y}})}}
+\end{equation}
+在训练时，模型的目标时使正确标注信息的概率最大。
+
+
+
+
+
+
+
+
 
