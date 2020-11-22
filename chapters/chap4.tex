@@ -4,3 +4,63 @@
 使用双向transformer网络结构来预训练语言模型，着眼于单词左右两侧的上下文,具有更强的表达能力。可以通过附加输出层对bert进行微调来完成模型构建。
 在本章，我们希望最大程度的利用bert预训练学到的语义编码能力，来提升第三章中提到的模型的准确率。
 
+\section{算法描述}
+向量编解码
+
+\section{服务分类、接口分类与参数填充联合识别}
+考虑到参数提取任务和服务分类、接口分类任务之间存在很强的关系，本节进行了联合识别的尝试，以便通过全局优化获得更好的语义理解结果。
+pipeline方法（上一章）通常是各自独立的模块，因此提出了联合模型，以期通过多个任务之间的相互增强来改善句子级语义理解结果。同时，和上一章
+一样，注意力机制被引入并引入到模型中，以提供精确的焦点。
+联合损失函数的方法“隐式”考量了这三个任务之间的联系，但并未明确为服务分类，接口分类和服务参数填充之间的进行关系建模，
+考虑到由于服务参数填充通常高度依赖于前两个任务，
+因此本节的模型着重于如何通过引入时隙门控机制来对服务分类，接口分类和服务参数填充之间进行显式关系建模。
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=17cm]{./images/lianhe.jpg}
+    \caption{联合识别模型}
+    \label{fig:lianhe1}
+  \end{figure}
+
+如图\ref{fig:lianhe}所示，是我们选择的联合识别模型。我们假设输入的词序列是x=[$x_{1}$,$x_{2}$,\dots,$x_{T}$],$x_{i}$经过双向LSTM处理后
+得到的结果是$\overleftarrow{\mathbf{h}}_{i}$和$\overrightarrow{\mathbf{h}}_{i}$,拼接以后在第i步得到的结果是$\mathbf{h}_{i}=[\overrightarrow{\mathbf{h}}_{i} ;\overleftarrow{\mathbf{h}}_{i}]$。
+1)三个attention层的计算方式
+
+我们在联合模型中共设置了三层注意力机制，分别用于对应服务分类、接口分类与参数填充，三者的attention原理相同，只是会训练各自的参数，因此可以合并介绍。
+设BLSTM得到的隐层向量序列为$h_{1}$,$h_{2}$,\dots,$h_{T}$,我们引入上下文向量${c}_{i}$来表示经过attention权重$α_{i,j}$和处理后的BLSTM隐层向量，
+具体的${c}_{i}^{D}$,${c}_{i}^{I}$,${c}_{i}^{S}$分别表示用于服务分类、接口分类与参数填充任务的上下文向量：
+\begin{equation}
+    \mathbf{c}_{i}=\sum_{j=1}^{T} \alpha_{i, j} \mathbf{h}_{j}
+  \end{equation}
+  其中$\alpha_{i, j}$也根据所在具体的attention层不同分为$\alpha_{i, j}^{D}$，$\alpha_{i, j}^{I}$，$\alpha_{i, j}^{S}$，计算公式如下：
+  \begin{equation}
+    \alpha_{t, j}=\frac{\exp \left(\operatorname{score}\left(\mathbf{h}_{i}, \mathbf{h}_{j}\right)\right)}{\sum_{k} \exp \left(\operatorname{score}\left(\mathbf{h}_{i}, \mathbf{x}_{k}\right)\right)}
+    \end{equation}
+    \begin{equation}
+      \operatorname{score}(\mathbf{h}_{i}, \mathbf{h}_{j}))=\tanh \left(\mathbf{W}\left[\mathbf{h}_{i} ; \mathbf{h}_{j}\right]\right)
+    \end{equation}
+显然这里的$\mathbf{W}$可由任务具体分为$\mathbf{W}_D$,$\mathbf{W}_I$,$\mathbf{W}_S$
+
+2)服务分类
+
+我们以1)中计算服务分类上下文向量的方法可以得到${c}_{i}^{D}$，再从BLSTM中取$\overleftarrow{\mathbf{h}}_{1}$和$\overrightarrow{\mathbf{h}}_{T}$,
+服务的分类预测可由下式得到：
+\begin{equation}
+    y^{D}=\operatorname{softmax}\left(W^{D}\left(\overleftarrow{\mathbf{h}}_{1}+\overrightarrow{\mathbf{h}}_{T}+c^{D}\right)\right)
+  \end{equation}
+
+  3)接口分类
+
+  我们以1)中计算接口分类上下文向量的方法可以得到${c}_{i}^{D}$，再从BLSTM中取$\overleftarrow{\mathbf{h}}_{1}$和$\overrightarrow{\mathbf{h}}_{T}$,
+  服务的分类预测可由下式得到：
+  \begin{equation}
+      y^{I}=\operatorname{softmax}\left(W^{I}\left(\overleftarrow{\mathbf{h}}_{1}+\overrightarrow{\mathbf{h}}_{T}+c^{I}\right)\right)
+    \end{equation} 
+
+  4)参数填充
+    
+
+\section{结合bert的模型}
+
+\section{结合ernie的模型}
+

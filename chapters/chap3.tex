@@ -273,7 +273,7 @@ attention层主要运算工作是计算词与词之间的语义相似的，这�
 \alpha_{t, j}=\frac{\exp \left(\operatorname{score}\left(\mathbf{h}_{i}, \mathbf{h}_{j}\right)\right)}{\sum_{k} \exp \left(\operatorname{score}\left(\mathbf{h}_{i}, \mathbf{x}_{k}\right)\right)}
 \end{equation}
 \begin{equation}
-  \operatorname{score}(\mathbf{h}_{i}, \mathbf{h}_{j}))=\tanh \left(\mathbf{W}_{a}\left[\mathbf{h}_{i} ; \mathbf{j}_{j}\right]\right)
+  \operatorname{score}(\mathbf{h}_{i}, \mathbf{h}_{j}))=\tanh \left(\mathbf{W}_{a}\left[\mathbf{h}_{i} ; \mathbf{h}_{j}\right]\right)
 \end{equation}
 attention权重由带有参数$\mathbf{W}_{a}$的感知器计算得到，以此来表示在理解目前词i时应该放多少注意力在词j上：
 \begin{equation}
@@ -296,7 +296,7 @@ attention权重由带有参数$\mathbf{W}_{a}$的感知器计算得到，以此�
 \begin{equation}
   p(\mathbf{y} \mid \mathbf{X})=\frac{e^{s(\mathbf{X}, \mathbf{y})}}{\sum_{\tilde{\mathbf{y}}} e^{s(\mathbf{X}, \tilde{\mathbf{y}})}}
 \end{equation}
-在训练时，模型的目标时使正确标注信息的概率最大。
+在训练时，模型的目标是使正确标注信息的概率最大。
 
 
 
