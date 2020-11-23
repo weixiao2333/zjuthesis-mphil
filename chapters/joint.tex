@@ -8,6 +8,7 @@
 向量编解码
 
 \section{服务分类、接口分类与参数填充联合识别}
+\subsection{单向联合}
 考虑到参数提取任务和服务分类、接口分类任务之间存在很强的关系，本节进行了联合识别的尝试，以便通过全局优化获得更好的语义理解结果。
 pipeline方法（上一章）通常是各自独立的模块，因此提出了联合模型，以期通过多个任务之间的相互增强来改善句子级语义理解结果。同时，和上一章
 一样，注意力机制被引入并引入到模型中，以提供精确的焦点。
@@ -44,21 +45,61 @@ pipeline方法（上一章）通常是各自独立的模块，因此提出了联
 2)服务分类
 
 我们以1)中计算服务分类上下文向量的方法可以得到${c}_{i}^{D}$，再从BLSTM中取$\overleftarrow{\mathbf{h}}_{1}$和$\overrightarrow{\mathbf{h}}_{T}$,
-服务的分类预测可由下式得到：
+$c^{D}$表示所有步骤得到的$c_i^{D}$的均值,服务的分类预测可由下式得到：
 \begin{equation}
     y^{D}=\operatorname{softmax}\left(W^{D}\left(\overleftarrow{\mathbf{h}}_{1}+\overrightarrow{\mathbf{h}}_{T}+c^{D}\right)\right)
   \end{equation}
-
-  3)接口分类
+  \begin{equation}
+    c^{D}=\frac{\sum_{i=1}^{T} c_i^{D}}{T}
+  \end{equation}
+3)接口分类
 
   我们以1)中计算接口分类上下文向量的方法可以得到${c}_{i}^{D}$，再从BLSTM中取$\overleftarrow{\mathbf{h}}_{1}$和$\overrightarrow{\mathbf{h}}_{T}$,
-  服务的分类预测可由下式得到：
+  $c^{I}$表示所有步骤得到的$c_i^{I}$的均值,服务的分类预测可由下式得到：
   \begin{equation}
       y^{I}=\operatorname{softmax}\left(W^{I}\left(\overleftarrow{\mathbf{h}}_{1}+\overrightarrow{\mathbf{h}}_{T}+c^{I}\right)\right)
     \end{equation} 
+    \begin{equation}
+        c^{I}=\frac{\sum_{i=1}^{T} c_i^{I}}{T}
+      \end{equation}
 
-  4)参数填充
-    
+      \begin{figure}[htbp]
+        \centering
+        \includegraphics[scale=0.5]{./images/gate.jpg}
+        \caption{gate结构}
+        \label{fig:gate}
+      \end{figure}
+
+4)参数填充
+
+如图\ref{fig:lianhe}中的gate，我们引入槽填充的控制门利用服务类型上下文向量${c}_{i}^{D}$和接口类型上下文向量${c}_{i}^{I}$来建立服务、接口与参数填充的关系
+期望提高槽填充的准确率。${c}^{D}$,${c}^{I}$,${c}_{i}^{S}$会在每一个步长传入gate\ref{fig:gate}门结构中计算:
+\begin{equation}
+    g=\sum v \cdot \tanh (c_{i}^{S}+W_D \cdot c^{D}+W_I \cdot c^{I})
+  \end{equation}
+其中$\mathbf{v},\mathbf{W}_D,\mathbf{W}_I$是可训练的参数，数值g可以被看作联合上下文向量${c}^{D}$,${c}^{I}$,${c}_{i}^{S}$计算得到的权值，
+较大的g表示slot上下文向量和D、I上下文向量注意到了输入序列的同一部分，可以推断出该语义槽和服务、接口之间的相关性更强，更有可能为我们需要提取的参数。
+最终第i个词的标签类别信息可由下式计算得出：
+\begin{equation}
+    y_{i}^{S}=\operatorname{softmax}\left(W_{h y}^{S}\left(h_{i}+c_{i}^{S} \cdot g\right)\right)
+  \end{equation}
+
+5)联合目标函数
+为了同时完成服务分类、接口分类与参数填充三项任务，需要建立联合损失函数，假设$y^D,y^I,y^S$表示正确的类别与标注，我们的目标
+便是使在输入为$\mathbf{x}$的条件下概率$p\left(y^{S}, y^{I},y^{D} \mid \mathbf{x}\right)$最大：
+\begin{equation}
+    \begin{array}{l}
+        p\left(y^{S}, y^{I},y^{D} \mid \mathbf{x}\right) \\
+        =p\left(y^{D} \mid \mathbf{x}\right) p\left(y^{I} \mid \mathbf{x}\right) \prod_{t=1}^{T} p\left(y_{t}^{S} \mid \mathbf{x}\right) \\
+        =p(y^{D} \mid x_{1}, \ldots, x_{T}) p(y^{I} \mid x_{1}, \ldots, x_{T}) \prod_{t=1}^{T} p(y_{t}^{S} \mid x_{1}, \ldots, x_{T})
+        \end{array}
+    \end{equation}
+
+\subsection{交互式联合}
+上一个的模型完成了从各任务独自建模到服务分类、接口分类向参数填充传递信息流的转换，但我们希望在任务与任务之间能够建立双向的信息交互。
+直观的讲，如果用户的意图是调用平台内部的火车票查询服务，他输入的语句更可能出现诸如起始终点城市，日期等语义槽；反之，如果一句话中包含了
+出发的起始，目的地和日期，那用户的意图更可能是调用行程相关的服务。因此，考虑到两个任务之间的交叉影响十分重要。
+
 
 \section{结合bert的模型}
 
