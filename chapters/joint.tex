@@ -19,7 +19,7 @@ pipeline方法（上一章）通常是各自独立的模块，因此提出了联
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=17cm]{./images/lianhe.jpg}
-    \caption{联合识别模型}
+    \caption{单向联合识别模型}
     \label{fig:lianhe1}
   \end{figure}
 
@@ -98,8 +98,91 @@ $c^{D}$表示所有步骤得到的$c_i^{D}$的均值,服务的分类预测可由
 \subsection{交互式联合}
 上一个的模型完成了从各任务独自建模到服务分类、接口分类向参数填充传递信息流的转换，但我们希望在任务与任务之间能够建立双向的信息交互。
 直观的讲，如果用户的意图是调用平台内部的火车票查询服务，他输入的语句更可能出现诸如起始终点城市，日期等语义槽；反之，如果一句话中包含了
-出发的起始，目的地和日期，那用户的意图更可能是调用行程相关的服务。因此，考虑到两个任务之间的交叉影响十分重要。
+出发的起始，目的地和日期，那用户的意图更可能是调用行程相关的服务。因此，考虑到两个任务之间的交叉影响十分重要。在本模型中，核心组件是
+交互影响模块，用于对两个任务之间的关系建模，旨在考虑两个任务的交叉影响以及相互促进。具体来说，在交互影响模块中，
+我们首先在服务、接口和参数填充分别应用注意力机制，以捕获初始的显式向量表示形式，从而提取三个任务的语义信息。
+其次，将明确的服务、接口和参数填充表示形式馈入一个共同交互的注意层，以进行相互交互。
+参考transformer的设计，将服务分类向量视为查询$Q_D$，参数填充向量视为键$K_S$以及值$K_S$，以获取可感知服务分类信息的参数填充向量表示；
+接口分类向量视为键$K_I$以及值$K_I$，以获取可感知服务分类信息的接口向量表示。
+将接口分类向量视为查询$Q_I$，参数填充向量视为键$K_S$以及值$K_S$，以获取可感知接口分类信息的参数填充向量表示；
+服务分类向量视为键$K_D$以及值$K_D$，以获取可感知接口分类信息的服务向量表示。
+将参数填充向量视为查询$Q_D$，服务分类向量视为键$K_S$以及值$K_S$，以获取可感知参数填充信息的服务分类向量表示；
+接口分类向量视为键$K_I$以及值$K_I$，以获取可感知参数填充信息的接口向量表示。
+基于此操作，可以建立多个任务之间的显示连接，背后的原理通过协同互动的注意力机制获取相应的相互信息。
 
+交互式联合识别模型的结构如图\ref{fig:lianhe2}所示，主要包含的部分是：共享编码层，注意力层，交互层，独立解码层，接下将分别介绍：
+1)共享编码层
+
+我们使用双向LSTM作为编码器，设输入词序列是x=[$x_{1}$,$x_{2}$,\dots,$x_{n}$],$x_{i}$(n为词的数量)经过双向LSTM处理后
+得到的结果是$\overleftarrow{\mathbf{h}}_{i}$和$\overrightarrow{\mathbf{h}}_{i}$,拼接以后在第i步得到的结果是$\mathbf{h}_{i}=[\overrightarrow{\mathbf{h}}_{i} ;\overleftarrow{\mathbf{h}}_{i}]$,
+编码后得到的矩阵为$\mathbf{H}$=[$h_{1}$,$h_{2}$,\dots,$h_{n}$]
+
+2)注意力层
+我们为服务分类、接口分类向参数填充三个任务分别引入了注意力机制，将注意力处理以后得到的向量作为相应任务的向量表示传入交互层。
+三者的attention原理相同，只是会训练各自的参数，因此可以合并介绍。
+我们引入上下文向量${c}_{i}$来表示经过attention权重$α_{i,j}$和处理后的BLSTM隐层向量：
+\begin{equation}
+    \mathbf{c}_{i}=\sum_{j=1}^{n} \alpha_{i, j} \mathbf{h}_{j}
+  \end{equation}
+  得到经过attention处理的句子矩阵表示$\mathbf{C}$=[$c_{1}$,$c_{2}$,\dots,$c_{n}$],其中$\alpha_{i, j}$也根据所在具体的attention层不同分为$\alpha_{i, j}^{D}$，$\alpha_{i, j}^{I}$，$\alpha_{i, j}^{S}$，计算公式如下：
+  \begin{equation}
+    \alpha_{t, j}=\frac{\exp \left(\operatorname{score}\left(\mathbf{h}_{i}, \mathbf{h}_{j}\right)\right)}{\sum_{k} \exp \left(\operatorname{score}\left(\mathbf{h}_{i}, \mathbf{x}_{k}\right)\right)}
+    \end{equation}
+    \begin{equation}
+      \operatorname{score}(\mathbf{h}_{i}, \mathbf{h}_{j}))=\tanh \left(\mathbf{W}\left[\mathbf{h}_{i} ; \mathbf{h}_{j}\right]\right)
+    \end{equation}
+显然这里的$\mathbf{W}$可由任务具体分为$\mathbf{W}_D$,$\mathbf{W}_I$,$\mathbf{W}_S$,最后我们将H矩阵与attention处理的C矩阵相加：
+\begin{equation}
+  \mathbf{H}=\mathbf{H}+\mathbf{C}
+\end{equation}
+这里H会根据训练时参数的不同分为三类$\mathbf{H}_{D},\mathbf{H}_{I},\mathbf{H}_{S}$,分别表示服务分类、接口分类向参数填充三项任务语义相关的显示的矩阵表示。
+
+3)交互层
+本层是多个任务的信息流建立信息交换的核心层，上层共得到三个矩阵$\mathbf{H}_{D},\mathbf{H}_{I},\mathbf{H}_{S}$，他们是任务相关的独立的语义表示，本层主要目的
+是在借助其他两项任务指导下更新当前任务对应的H矩阵，达到交互信息流的目的，提高模型准确率。
+首先我们将$\mathbf{H}_{D},\mathbf{H}_{I},\mathbf{H}_{S}$分别做三组线性变换得到矩阵($\mathbf{Q}_{D},\mathbf{Q}_{I},\mathbf{Q}_{S}$),
+($\mathbf{K}_{D},\mathbf{K}_{I},\mathbf{K}_{S}$),($\mathbf{V}_{D},\mathbf{V}_{I},\mathbf{V}_{S}$)，之后的计算借鉴attention思想。
+对于服务分类任务，将$\mathbf{Q}_{D}$最为queries,$\mathbf{K}_{I}$作为keys和$\mathbf{V}_{I}$作为values,$\mathbf{K}_{S}$作为keys和$\mathbf{V}_{S}$作为values,做以下处理来达到信息的交互：
+\begin{equation}
+  \mathbf{C}_{\mathbf{DI}}=\operatorname{softmax}\left(\frac{\mathbf{Q}_{\mathbf{D}} \mathbf{K}_{\mathbf{I}}^{\top}}{\sqrt{d_{k}}}\right) \mathbf{V}_{\mathbf{I}}\\
+\end{equation}
+\begin{equation}  
+\mathbf{C}_{\mathbf{DS}}=\operatorname{softmax}\left(\frac{\mathbf{Q}_{\mathbf{D}} \mathbf{K}_{\mathbf{S}}^{\top}}{\sqrt{d_{k}}}\right) \mathbf{V}_{\mathbf{S}}\\
+\end{equation}
+\begin{equation}  
+\mathbf{H}_\mathbf{D}=\mathbf{H}_\mathbf{D}+\mathbf{C}_{\mathbf{DI}}+\mathbf{C}_{\mathbf{DS}}
+\end{equation}
+
+对于接口分类任务，将$\mathbf{Q}_{I}$最为queries,$\mathbf{K}_{D}$作为keys和$\mathbf{V}_{D}$values,$\mathbf{K}_{S}$作为keys和$\mathbf{V}_{S}$values,做以下处理来达到信息的交互：
+\begin{equation}
+  \mathbf{C}_{\mathbf{ID}}=\operatorname{softmax}\left(\frac{\mathbf{Q}_{\mathbf{I}} \mathbf{K}_{\mathbf{D}}^{\top}}{\sqrt{d_{k}}}\right) \mathbf{V}_{\mathbf{D}}\\
+\end{equation}
+\begin{equation}
+  \mathbf{C}_{\mathbf{IS}}=\operatorname{softmax}\left(\frac{\mathbf{Q}_{\mathbf{I}} \mathbf{K}_{\mathbf{S}}^{\top}}{\sqrt{d_{k}}}\right) \mathbf{V}_{\mathbf{S}}\\
+\end{equation}
+\begin{equation}
+  \mathbf{H}_\mathbf{I}=\mathbf{H}_\mathbf{I}+\mathbf{C}_{\mathbf{ID}}+\mathbf{C}_{\mathbf{IS}}
+\end{equation}
+
+对于接口分类任务，将$\mathbf{Q}_{S}$最为queries,$\mathbf{K}_{D}$作为keys和$\mathbf{V}_{D}$values,$\mathbf{K}_{I}$作为keys和$\mathbf{V}_{I}$values,做以下处理来达到信息的交互：
+\begin{equation}
+  \mathbf{C}_{\mathbf{SD}}=\operatorname{softmax}\left(\frac{\mathbf{Q}_{\mathbf{S}} \mathbf{K}_{\mathbf{D}}^{\top}}{\sqrt{d_{k}}}\right) \mathbf{V}_{\mathbf{D}}\\
+\end{equation}
+\begin{equation}
+  \mathbf{C}_{\mathbf{SI}}=\operatorname{softmax}\left(\frac{\mathbf{Q}_{\mathbf{S}} \mathbf{K}_{\mathbf{I}}^{\top}}{\sqrt{d_{k}}}\right) \mathbf{V}_{\mathbf{I}}\\
+\end{equation}
+\begin{equation}
+  \mathbf{H}_\mathbf{S}=\mathbf{H}_\mathbf{S}+\mathbf{C}_{\mathbf{SD}}+\mathbf{C}_{\mathbf{SI}}
+\end{equation}
+
+其中$d_k$是Q,K矩阵的列数，即向量维度。我们认为经过上面计算更新过后的矩阵$\mathbf{H}_{D},\mathbf{H}_{I},\mathbf{H}_{S}$，包含了更丰富的语义信息
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=18cm]{./images/co-interactive.jpg}
+  \caption{交互式联合识别模型}
+  \label{fig:lianhe2}
+\end{figure}
 
 \section{结合bert的模型}
 
