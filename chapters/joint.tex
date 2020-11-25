@@ -234,6 +234,29 @@ $\mathbf{y}^{I}$是输出的服务类别的分布，$\mathbf{O}^{I}$是预测的
 \section{结合bert的模型}
 
 大量研究表明，语言模型预训练对于学习通用语言表示很有用，作为最新的语言模型预训练模型，BERT在许多语言理解任务中均取得了惊人的成绩。
+bert预训练模型的使用可以避免从头开始训练新模型，它通过利用大量非标注数据来学习语言的通用表示形式。
+
+官方提供了不同参数的多版本bert供使用，本模型选择的是BERT-Base Chinese,
+其中 L = 12, H = 768, A = 12 ，params的总量为 110 M 。具体来说， L = 12 指 Transformer 的层数为 12 层，
+ H = 768 表示 Transformer 内部 包含 768 个隐含单元， A = 12 表示多头自制力机制中自注意力机制模型为 12 个\cite{devlin2018bert}。
+ BERT依赖于Transformer（一种学习文本中单词之间的上下文关系的注意力机制），一个基本的Transformer由一个读取文本输入的编码器和一个对任务进行预测的解码器组成。
+ 由于BERT的目标是生成语言表示模型，因此只需要编码器部分即可。BERT编码器的输入是一系列token，这些token首先被转换为矢量，然后在神经网络中进行处理。
+ 但是在开始处理之前，BERT需要对输入进行处理并用一些额外的元数据修饰：
+
+ 1.令牌嵌入：在第一个句子的开头将[CLS]令牌添加到输入的单词令牌中，并在每个句子的末尾插入[SEP]令牌。
+
+2.段嵌入：将指示句子A或句子B的标记添加到每个标记，这使编码器能够区分句子。
+
+3.位置嵌入：将位置嵌入添加到每个标记，以指示其在句子中的位置。
+
+因此，引入bert模型以后我们不再需要结巴分词工具，直接将句子按字向量序列输入bert模型编码，bert对输入的处理如图\ref{fig:bertInput}。
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=18cm]{./images/bertInput.jpg}
+  \caption{bert对输入的处理}
+  \label{fig:bertInput}
+\end{figure}
 
 
 \section{结合ernie的模型}
