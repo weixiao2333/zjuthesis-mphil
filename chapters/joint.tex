@@ -110,6 +110,13 @@ $c^{D}$表示所有步骤得到的$c_i^{D}$的均值,服务的分类预测可由
 接口分类向量视为键$K_I$以及值$K_I$，以获取可感知参数填充信息的接口向量表示。
 基于此操作，可以建立多个任务之间的显示连接，背后的原理通过协同互动的注意力机制获取相应的相互信息。
 
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=18cm]{./images/co-interactive.jpg}
+  \caption{交互式联合识别模型}
+  \label{fig:lianhe2}
+\end{figure}
+
 交互式联合识别模型的结构如图\ref{fig:lianhe2}所示，主要包含的部分是：共享编码层，注意力层，交互层，独立解码层，接下将分别介绍：
 1)共享编码层
 
@@ -152,7 +159,6 @@ $c^{D}$表示所有步骤得到的$c_i^{D}$的均值,服务的分类预测可由
 \begin{equation}  
 \mathbf{H}_\mathbf{D}=\mathbf{H}_\mathbf{D}+\mathbf{C}_{\mathbf{DI}}+\mathbf{C}_{\mathbf{DS}}
 \end{equation}
-
 对于接口分类任务，将$\mathbf{Q}_{I}$最为queries,$\mathbf{K}_{D}$作为keys和$\mathbf{V}_{D}$values,$\mathbf{K}_{S}$作为keys和$\mathbf{V}_{S}$values,做以下处理来达到信息的交互：
 \begin{equation}
   \mathbf{C}_{\mathbf{ID}}=\operatorname{softmax}\left(\frac{\mathbf{Q}_{\mathbf{I}} \mathbf{K}_{\mathbf{D}}^{\top}}{\sqrt{d_{k}}}\right) \mathbf{V}_{\mathbf{D}}\\
@@ -163,7 +169,6 @@ $c^{D}$表示所有步骤得到的$c_i^{D}$的均值,服务的分类预测可由
 \begin{equation}
   \mathbf{H}_\mathbf{I}=\mathbf{H}_\mathbf{I}+\mathbf{C}_{\mathbf{ID}}+\mathbf{C}_{\mathbf{IS}}
 \end{equation}
-
 对于接口分类任务，将$\mathbf{Q}_{S}$最为queries,$\mathbf{K}_{D}$作为keys和$\mathbf{V}_{D}$values,$\mathbf{K}_{I}$作为keys和$\mathbf{V}_{I}$values,做以下处理来达到信息的交互：
 \begin{equation}
   \mathbf{C}_{\mathbf{SD}}=\operatorname{softmax}\left(\frac{\mathbf{Q}_{\mathbf{S}} \mathbf{K}_{\mathbf{D}}^{\top}}{\sqrt{d_{k}}}\right) \mathbf{V}_{\mathbf{D}}\\
@@ -175,16 +180,61 @@ $c^{D}$表示所有步骤得到的$c_i^{D}$的均值,服务的分类预测可由
   \mathbf{H}_\mathbf{S}=\mathbf{H}_\mathbf{S}+\mathbf{C}_{\mathbf{SD}}+\mathbf{C}_{\mathbf{SI}}
 \end{equation}
 
-其中$d_k$是Q,K矩阵的列数，即向量维度。我们认为经过上面计算更新过后的矩阵$\mathbf{H}_{D},\mathbf{H}_{I},\mathbf{H}_{S}$，包含了更丰富的语义信息
+其中$d_k$是Q,K矩阵的列数，即向量维度。我们认为经过上面计算更新过后的矩阵$\mathbf{H}_{D},\mathbf{H}_{I},\mathbf{H}_{S}$，包含了更丰富的语义信息，
+实现了多任务之间信息的交互。
 
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[width=18cm]{./images/co-interactive.jpg}
-  \caption{交互式联合识别模型}
-  \label{fig:lianhe2}
-\end{figure}
+4)独立解码层
+
+在经过共享的交互层以后，各任务拥有自己独立的解码层。
+对于服务分类任务，我们使用上一章介绍的CNN的max-pooling方法，将$\mathbf{H}_{D}$经过max-pooling处理得到一个句子语义级表示的向量$\mathbf{M}_D$,
+之后经过softmax函数：
+\begin{equation}
+  \mathbf{y}^{D}=\operatorname{softmax} (\mathbf{W}^{D}\mathbf{M}_D+b)
+\end{equation}
+\begin{equation}
+  \mathbf{O}^{D}=\operatorname{argmax} (\mathbf{y}^{D})
+\end{equation}
+$\mathbf{y}^{D}$是输出的服务类别的分布，$\mathbf{O}^{D}$是预测的服务类别，$\mathbf{W}^{D}$和b都是训练的参数。
+对于接口分类任务解码器也做同样的处理，使用CNN的max-pooling方法，将$\mathbf{H}_{D}$经过max-pooling处理得到一个句子语义级表示的向量$\mathbf{M}_I$,
+之后经过softmax函数：
+\begin{equation}
+  \mathbf{y}^{I}=\operatorname{softmax} (\mathbf{W}^{I}\mathbf{M}_I+b)
+\end{equation}
+\begin{equation}
+  \mathbf{O}^{I}=\operatorname{argmax} (\mathbf{y}^{I})
+\end{equation}
+$\mathbf{y}^{I}$是输出的服务类别的分布，$\mathbf{O}^{I}$是预测的服务类别，$\mathbf{W}^{I}$和b都是训练的参数。
+对于参数提取即语义槽填充任务，为了更好的建模标签与标签之间的依赖性，我们在解码层加了CRF处理，如下式所示：
+\begin{equation}
+  \mathbf{O}_{\mathbf{S}} =\mathbf{W}^{\mathbf{S}} {\mathbf{H}}_{\mathbf{S}}+\mathbf{b}_{\mathbf{S}} 
+\end{equation}
+\begin{equation}
+  P\left(\hat{\mathbf{y}} \mid \mathbf{O}_{\mathbf{S}}\right) =\frac{\sum_{i=1} \exp f\left(y_{i-1}, y_{i}, \mathbf{O}_{\mathbf{S}}\right)}{\sum_{y^{\prime}} \sum_{i=1} \exp f\left(y_{i-1}^{\prime}, y_{i}^{\prime}, \mathbf{O}_{\mathbf{S}}\right)}
+  \end{equation}
+  $f(y_{i-1}, y_{i}, \mathbf{O}_{\mathbf{S}})$表示从标签$y_{i-1}$到标签$y_{i}$的转移分数，以及标签$y_{i}$自身的得分。
+同时我们采用联合损失函数的形式对三项任务一起训练，服务分类预测的交叉熵损失函数可记为：
+\begin{equation}
+\mathcal{L}_{1} \triangleq-\sum_{j=1}^{m} \hat{\mathbf{y}}^{j, \mathbf{D}} \log \left(\mathbf{y}^{j, \mathbf{D}}\right)
+\end{equation}
+同理，接口分类交叉熵损失函数可记为：
+\begin{equation}
+  \mathcal{L}_{2} \triangleq-\sum_{j=1}^{m} \hat{\mathbf{y}}^{j, \mathbf{I}} \log \left(\mathbf{y}^{j, \mathbf{I}}\right)
+  \end{equation}
+  参数语义槽填充交叉熵损失函数可记为：
+  \begin{equation}
+    \mathcal{L}_{3} \triangleq-\sum_{j=1}^{m} \sum_{i=1}^{n_{j}} \hat{\mathbf{y}}_{i}^{j, \mathbf{S}} \log \left(\mathbf{y}_{i}^{j, \mathbf{S}}\right)
+  \end{equation}
+  其中$\hat{\mathbf{y}}^{j, \mathbf{D}},\hat{\mathbf{y}}^{j, \mathbf{I}},\hat{\mathbf{y}}_{i}^{j, \mathbf{S}}$为真实值，m是训练的数据总量，联合损失函数
+  可表示为：
+  \begin{equation}
+    \mathcal{L}_{\theta}=\alpha \mathcal{L}_{1}+\beta \mathcal{L}_{2}+(1-\alpha-\beta) \mathcal{L}_{3}
+  \end{equation}
+  其中$\alpha,\beta$为超参数。
 
 \section{结合bert的模型}
+
+大量研究表明，语言模型预训练对于学习通用语言表示很有用，作为最新的语言模型预训练模型，BERT在许多语言理解任务中均取得了惊人的成绩。
+
 
 \section{结合ernie的模型}
 
