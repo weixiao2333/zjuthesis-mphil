@@ -251,11 +251,21 @@ bert预训练模型的使用可以避免从头开始训练新模型，它通过�
 
 因此，引入bert模型以后我们不再需要结巴分词工具，直接将句子按字向量序列输入bert模型编码，bert对输入的处理如图\ref{fig:bertInput}。
 
+\subsection{引入bert的基础模型}
+首先，我们提出最简化版的bert-base模型，
+
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=18cm]{./images/bertInput.jpg}
   \caption{bert对输入的处理}
   \label{fig:bertInput}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=16cm]{./images/bert-joint.jpg}
+  \caption{引入bert交互式联合识别模型}
+  \label{fig:bert-joint}
 \end{figure}
 
 
