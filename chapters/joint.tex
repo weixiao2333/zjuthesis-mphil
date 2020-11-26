@@ -250,10 +250,6 @@ bert预训练模型的使用可以避免从头开始训练新模型，它通过�
 3.位置嵌入：将位置嵌入添加到每个标记，以指示其在句子中的位置。
 
 因此，引入bert模型以后我们不再需要结巴分词工具，直接将句子按字向量序列输入bert模型编码，bert对输入的处理如图\ref{fig:bertInput}。
-
-\subsection{引入bert的基础模型}
-首先，我们提出最简化版的bert-base模型，
-
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=18cm]{./images/bertInput.jpg}
@@ -261,6 +257,39 @@ bert预训练模型的使用可以避免从头开始训练新模型，它通过�
   \label{fig:bertInput}
 \end{figure}
 
+\subsection{引入bert的基础模型}
+首先，我们提出最简版的bert-base模型，将服务分类、接口分类向参数填充三个任务利用联合损失函数隐式的建模，本模型主要起对照组的作用，
+来验证引入bert是否能够解决NLU泛化能力差的问题，同时可以作为下一个模型的基准，模型架构如图\ref{fig:bert-base}所示。
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=16cm]{./images/bert-base.jpg}
+  \caption{bert-base联合识别模型}
+  \label{fig:bert-base}
+\end{figure}
+
+模型结构非常清晰，将用户语句按字向量序列输入bert模型编码，得到bert的输出$\mathbf{H}$=[$h_{1}$,$h_{2}$,\dots,$h_{n}$]，
+我们取bert输出的第一个向量，也就是特殊token（[CLS]）的隐藏状态作为两项分类任务的输入传给softmax层:
+\begin{equation}
+  y^{d}=\operatorname{softmax}\left(\mathbf{W}^{d} \boldsymbol{h}_{1}+\boldsymbol{b}^{d}\right)
+\end{equation}
+\begin{equation}
+  y^{i}=\operatorname{softmax}\left(\mathbf{W}^{i} \boldsymbol{h}_{1}+\boldsymbol{b}^{i}\right)
+\end{equation}
+对于参数填充任务，将[$h_{2}$,\dots,$h_{n}$]隐层状态传入softmax层，以对插槽填充标签进行分类：
+\begin{equation}
+y_{n}^{s}=\operatorname{softmax}\left(\mathbf{W}^{s} \boldsymbol{h}_{n}+\boldsymbol{b}^{s}\right), n \in 2 \ldots N
+\end{equation}
+三项任务联合概率函数为：
+\begin{equation}
+  p\left(y^{d},y^{i}, y^{s} \mid \boldsymbol{x}\right)=p\left(y^{d} \mid \boldsymbol{x}\right) \left(y^{i} \mid \boldsymbol{x}\right) \prod_{n=1}^{N} p\left(y_{n}^{s} \mid \boldsymbol{x}\right)
+  \end{equation}
+  训练的目标是最大化正确标签的概率$p\left(y^{d},y^{i}, y^{s} \mid \boldsymbol{x}\right)$。
+
+\subsection{引入bert的交互式联合识别模型}
+
+为在交互式联合识别模型中引入bert,将interactive模型的共享编码器换成bert拼接在attention之前\ref{fig:bert-joint}，模型其他结构与interactive模型
+一致不再赘述，bert部分的参数采用fine-tuning的方式更新。
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=16cm]{./images/bert-joint.jpg}
@@ -269,5 +298,5 @@ bert预训练模型的使用可以避免从头开始训练新模型，它通过�
 \end{figure}
 
 
-\section{结合ernie的模型}
+% \section{结合ernie的模型}
 
