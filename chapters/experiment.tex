@@ -126,7 +126,44 @@ IDE&Pycharm\\
 \end{tabular}
 \end{table}
 
-\subsection{实验设计}
+\subsection{超参数设置}
+超参数的调整主要利用验证集依靠控制变量法来寻找最优的超参数值，同一实验进行多次训练取最优。例如，卷积层的激活函数本文对比了ReLu、Tanh、PReLU，
+CNN层卷积核高度对比了2，3，4三种，卷积核的数量进行了16，32，64，128四种不同的实验等，比较不同超参数对实验结果的影响。
+attention-CNN-LSTM模型和Transformable-CNN-LSTM模型中CNN层最终确定的超参数值如表\ref{tab:cnnPara}所示，
+引入预训练的模型最终确定的超参数值如表\ref{tab:bertPara}所示，
+
+\begin{table}[htb]
+  \centering
+  \caption{CNN层相关参数选择}
+  \label{tab:cnnPara}
+\begin{tabular}{cc|cc}
+\hline
+参数名称&值&参数名称&值\\
+\hline
+卷积核高度&2，3&卷积核数量&64\\
+learning rate&0.002&batch size&128\\
+池化层方法&k-max polling&epochs &60\\
+Optimizer&Adam&&\\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htb]
+  \centering
+  \caption{引入预训练的模型相关参数选择}
+  \label{tab:bertPara}
+\begin{tabular}{cc|cc}
+\hline
+参数名称&值&参数名称&值\\
+\hline
+learning rate&5e-4&batch size&64\\
+Optimizer&Adam&epochs &20\\
+
+\hline
+\end{tabular}
+\end{table}
+
+\section{实验设计}
 本文对前两章提到的所有模型都进行了实验，虽然模型数量较多，但总的来说可分为两类：基于词向量的模型和引入预训练的模型
 \subsection{基于词向量的模型}
 前文提到的attention-CNN-LSTM模型、Transformable-CNN-LSTM模型、BiLSTM-attention-CRF模型均是基于词向量的模型，实验流程类似。
@@ -151,5 +188,4 @@ IDE&Pycharm\\
 \end{figure}
 
 
-
-\section{实验结果与分析}fine-tuning
+\section{实验结果与分析}
