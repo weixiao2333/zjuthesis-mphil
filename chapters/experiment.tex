@@ -1,4 +1,4 @@
-\chapter{实验设计与讨论}
+\chapter{实验与讨论}
 本章对前面提到的所有模型都设计了相应的实验，同时做了多组对照试验，以验证我们对模型改进的可行性和有效性。
 
 \section{实验数据集与预处理}
@@ -54,63 +54,102 @@ SMP2019ECDT数据集中与跨界服务平台系统内八大服务相关的数据
 句子准确率（Sentence Accuracy)作为更严格的指标来评估模型，即一个句子只有在三项任务同时正确时才会被计入
 句子准确率中。
 
-以服务类别标签的混淆矩阵\ref{fig:bing}为例介绍以上指标的计算方法
-
-% \begin{table}[htb]
-%   \centering
-%   \caption{服务类型混淆矩阵}
-%   \label{tab:RelatedResearchInChina}
-%     \begin{tabular}{p{2cm}|p{4cm}}
-%       \toprule
-%       % & \multicolumn{1}{m{60mm}}{\heiti\centering 相关研究成果}
-%       \multicolumn{1}{l|}{\heiti } & \multicolumn{1}{l|}{\heiti 相关研究内容} \\
-%       \midrule
-      
-%       \bottomrule
-%     \end{tabular}
-% \end{table}
-
-
-\begin{tabular}{|c|c|c|c|c|}
-  \hline
-  \multirow{2}{*}{Multi-Row}&
-  \multicolumn{2}{c|}{Multi-Column}&
-  \multicolumn{2}{c|}{\multirow{2}{*}{Multi-RowandCol}} \\
-  \cline{2-3}
-    & column-1&column-2 & \multicolumn{2}{c|}{}\\
-  \hline
-  label-1 & label-2&label-3 & label-4& label-5\\
-  \hline
-  \end{tabular}
-
-  \begin{tabular}{|c|c|c|c|}
+ \begin{table}[htb]
+      \centering
+      \caption{服务类型混淆矩阵}
+      \label{tab:hunxiao}
+  \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
     \hline
-    \multicolumn{2}{c|}{\multirow{2}{*}{两行两列}}&
-    \multicolumn{2}{c|}{预测值}\\
-    \cline{3-4}
-     & &flight & music \\
+    \multicolumn{2}{|c|}{\multirow{2}{*}{}}&
+    \multicolumn{8}{c|}{预测值}\\
+    \cline{3-10}
+    \multicolumn{2}{|c|}{}&flight & music & weather & train & map &stock &medical & news \\
      \hline
-    label-1 & label-2&label-3 & label-4\\
+     \multirow{8}{*}{真实值}&
+     flight&$n_1$&$n_2$&$n_3$&$n_4$&$n_5$&$n_6$&$n_7$&$n_8$\\
+     \cline{2-10}
+     \multicolumn{1}{|c|}{}&music&$n_{9}$&$n_{10}$&$n_{11}$&$n_{12}$&$n_{13}$&$n_{14}$&$n_{15}$&$n_{16}$\\
+     \cline{2-10}
+     \multicolumn{1}{|c|}{}&weather&$n_{17}$&$n_{18}$&$n_{19}$&$n_{20}$&$n_{21}$&$n_{22}$&$n_{23}$&$n_{24}$\\
+     \cline{2-10}
+     \multicolumn{1}{|c|}{}&train&$n_{25}$&$n_{26}$&$n_{27}$&$n_{28}$&$n_{29}$&$n_{30}$&$n_{31}$&$n_{32}$\\
+     \cline{2-10}
+     \multicolumn{1}{|c|}{}&map&$n_{33}$&$n_{34}$&$n_{35}$&$n_{36}$&$n_{37}$&$n_{38}$&$n_{39}$&$n_{40}$\\
+     \cline{2-10}
+     \multicolumn{1}{|c|}{}&stock&$n_{41}$&$n_{42}$&$n_{43}$&$n_{44}$&$n_{45}$&$n_{46}$&$n_{47}$&$n_{48}$\\
+     \cline{2-10}
+     \multicolumn{1}{|c|}{}&medical&$n_{49}$&$n_{50}$&$n_{51}$&$n_{52}$&$n_{53}$&$n_{54}$&$n_{55}$&$n_{56}$\\
+     \cline{2-10}
+     \multicolumn{1}{|c|}{}&news&$n_{57}$&$n_{58}$&$n_{59}$&$n_{60}$&$n_{61}$&$n_{62}$&$n_{63}$&$n_{64}$\\
     \hline
     \end{tabular}
+  \end{table}
 
-
-    
-
-    % \begin{table}[htb]
-    %   \centering
-    %   \caption{服务类型混淆矩阵}
-    %   \label{tab:hunxiao}
-    %   \begin{tabular}{|l|l|l|l|l|l|l||l|l|l|}
-    %     \hline
-    %     \multicolumn{2}{c|}{\multirow{2}{*}{两行两列}}&
-    %     \multicolumn{8}{c|}{预测值}\\
-    %     \cline{3-10}
-    %      &flight & music & weather & train & map &stock &medical & news \\
-    %     \hline
-    %     \end{tabular}
-    % \end{table}
+  以服务类别标签的混淆矩阵\ref{tab:hunxiao}为例介绍以上指标的计算方法,设样本数据总量是N。
+  准确率（Accuracy）是最直观的性能指标，它是正确预测的观测值与总观测值的比率，如果具有很高的准确率，可以认为模型是很好的：
+  \begin{equation}
+  % \text {Accuracy}(\text {health})=\frac{\sum_{i=8}^{14} n_{i}}{N}
+  \text {Accuracy}=\frac{n_1+n_{10}+n_{19}+n_{28}+n_{37}+n_{46}+n_{55}+n_{64}}{N}
+\end{equation}
+精确度（Precision）是正确预测的该类样本与总的预测为该类样本的观察值之比，多用于二分类问题，对于文本分类这样的多分类问题，可以单独取一个类别做计算，以天气类别为例：
+\begin{equation}
+  \text {Precision}(\text {weather})=\frac{n_{19}}{n_3+n_{11}+n_{19}+n_{27}+n_{35}+n_{43}+n_{51}+n_{69}}
+\end{equation}
+召回率（Recall)是正确预测的该类样本与实际为该类的样本总量的比率，多用于二分类问题，对于文本分类这样的多分类问题，可以单独取一个类别做计算，以天气类别为例：
+\begin{equation}
+  \text {Recall}(\text {weather})=\frac{n_{19}}{\sum_{i=17}^{24} n_{i}}
+\end{equation}
+F1值是精确度和召回率的调和平均值，直观上它不如准确性容易理解，但是F1通常比准确性更有用，尤其是在类分布不均匀的情况下：
+\begin{equation}
+  F_1=\frac{2 \times Precision \times Recall}{ Precision + Recall}
+  % F_{1}=\frac{2 \times \text {Precision } \times \text { Recall}}{\text {Precision }+\text { Recall}}
+\end{equation}
 
 \section{实验设置}
+\subsection{实验环境}
+本文的实验环境是实验室服务器，操作系统为Ubuntu 16.04.4系统,集成开发环境选用Pycharm使用Python语言利用PyTorch框架编程。
+关于实验室机器硬件配置，中央处理器为Intel(R) Xeon(R) CPU E5-2603 v3 @ 1.60GHz，图形处理器为GeForce RTX 2080Ti。
 
-\section{实验结果与分析}
+\begin{table}[htb]
+  \centering
+  \caption{实验环境}
+  \label{tab:hunxiao}
+\begin{tabular}{c|c}
+\hline
+实验环境&配置参数\\
+\hline
+操作系统&Ubuntu 16.04.4\\
+编程语言&python 3.6\\
+IDE&Pycharm\\
+模型框架&PyTorch\\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{实验设计}
+本文对前两章提到的所有模型都进行了实验，虽然模型数量较多，但总的来说可分为两类：基于词向量的模型和引入预训练的模型
+\subsection{基于词向量的模型}
+前文提到的attention-CNN-LSTM模型、Transformable-CNN-LSTM模型、BiLSTM-attention-CRF模型均是基于词向量的模型，实验流程类似。
+第一步输入句子经过分词处理得到词序列，接着利用word2vec将词语向量化输入神经网络训练。训练集数据用于模型的拟合，验证集数据用于对模型超参数的调整以及对模型性能做初步判定，
+测试集用来评估模型最终的泛化能力，不作为调参、特征等算法相关的选择依据。测试阶段加载训练好的模型参数，数据输入进入网络得到预测结果。
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[scale=0.5]{./images/word2vecTrain.jpg}
+  \caption{基于词向量模型的实验流程}
+  \label{fig:word2vecTrain}
+\end{figure}
+
+\subsection{引入预训练的模型}
+前文提到的单向联合识别模型、交互式联合识别模型、bert-base联合识别模型、引入bert的交互式联合识别模型均属于结合预训练的模型，实验流程类似。
+首先加载预训练模型的参数，输入句子的字序列向量进入网络训练。训练集数据用于模型的拟合以及对预训练模型进行微调（fine-tuning），验证集数据用于对模型超参数的调整以及对模型性能做初步判定，
+测试集用来评估模型最终的泛化能力，不作为调参、特征等算法相关的选择依据。测试阶段加载训练好的模型参数和预训练参数，数据输入进入网络得到预测结果。
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[scale=0.5]{./images/bertTrain.jpg}
+  \caption{引入预训练模型的实验流程}
+  \label{fig:bertTrain}
+\end{figure}
+
+
+
+\section{实验结果与分析}fine-tuning
