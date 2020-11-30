@@ -189,3 +189,93 @@ Optimizer&Adam&epochs &20\\
 
 
 \section{实验结果与分析}
+模型训练过程中的损失函数Loss曲线变化如图所示，可以只列两个，预训练
+
+\begin{figure}[htbp]
+  % \centering
+  % \hspace{-7mm}
+  \subfloat[服务Service分类的accuracy曲线]{
+  \includegraphics[width=8.6cm]{./images/serviceAccuracy.jpg}
+  \label{fig:serviceAccuracy}
+  }
+  % \hspace{5pt}
+    % \hspace{+5mm}
+  \subfloat[接口Interface分类的accuracy曲线]{
+  \includegraphics[width=8.6cm]{./images/interfaceAccuracy.jpg}
+  \label{fig:interfaceAccuracy}
+  }\\
+  % \hspace{5pt}
+  %  \hspace{-7mm}
+  \subfloat[语义槽填充的$F_1$曲线]{
+  \includegraphics[width=8.6cm]{./images/slotF1.jpg}
+  \label{fig:slotF1}
+  }
+  % \hspace{5pt}
+  %  \hspace{+5mm}
+  \subfloat[句子整体的accuracy曲线]{
+  \includegraphics[width=8.6cm]{./images/sentenceAccuracy.jpg}
+  \label{fig:sentenceAccuracy}
+  }
+  \caption{训练集上各模型指标值的变化}
+  \label{fig:4}
+  \end{figure}
+
+  实验训练过程中模型的accuracy指标以及$F_1$指标变化如图\ref{fig:4}所示，从图\ref{fig:serviceAccuracy}\ref{fig:interfaceAccuracy}
+  可以看到单向联合识别模型在服务分类和接口分类
+  任务中表现不佳，不如attention-CNN-LSTM模型和Transformable-CNN-LSTM模型，原因是单向联合识别模型中信息流是从服务分类
+  和接口分类传入语义槽填充，单向的流动并不能对信息源的任务带来增益。虽然如此，图\ref{fig:slotF1}显示，单向联合识别模型在语义槽填充任务上的表现
+  优于BiLSTM-attention-CRF，原因在于得到了前两个任务的语义信息补充。
+
+  预训练模型bert的引入为各项任务的性能带来了显著的提升，一方面，结合预训练的模型在经过较少轮的迭代就可以趋于收敛；
+  另一方面，模型最终的指标得分也因为bert的引入而提高。这是由于bert的参数在预训练过程中使用了数据量庞大的语料，
+  具有了对许多中文语句很好的理解和编码能力，同时本文的数据集中语料数量有限，导致其他模型不能很好的收敛，最终如图\ref{fig:sentenceAccuracy}显示
+  结合预训练bert的模型在句子整体的准确率也是最优。
+
+  \begin{table}[htb]
+    \centering
+    \caption{实验结果表}
+    \label{tab:jieguo}
+\begin{tabular}{c|cccc}
+  \hline
+   model&Service Acc&Interface Acc&Slot $F_1$&Sentence Acc\\
+   \hline
+   attention-CNN-LSTM&84.37\%&-&-&-\\
+   Transformable-CNN-LSTM&-&82.65\%&-&-\\
+   BiLSTM-attention-CRF&-&-&74.19\%&-\\
+   单向联合识别模型&82.13\%&82.09\%&81.83\%&78.31\%\\
+   交互式联合识别模型&86.54\%&85.53\%&83.62\%&80.13\%\\
+   bert-base&93.72\%&91.26\%&88.01\%&87.63\%\\
+   bert-交互式联合识别模型&$\mathbf{95.18\%}$&$\mathbf{94.91}\%$&$\mathbf{92.23}\%$&$\mathbf{91.47}\%$\\
+  \hline
+  \end{tabular}
+\end{table}
+
+本文7个模型的实验结果如表\ref{tab:jieguo}所示,以下是对结果数据的展开分析。
+在多个任务中，对比结合预训练的模型和传统深度学习模型，“bert+”模式的结构对性能有很大的提升，这也证明了bert在语义理解任务中的作用和重要意义。
+对于服务分类、接口分类和参数提取（语义槽填充）这三项强相关的任务，从其他任务中获得决策信息对当前任务的预测都大有裨益，实验结果也验证了这一猜想，
+单向联合识别模型由于获得了服务类别和接口类别信息，在参数提取（语义槽填充）任务上的$F_1$值相较于BiLSTM-attention-CRF有所提升，前两项任务表现
+不佳是由于服务和接口的分类预测时并没有获得其他任务的决策信息，相反的，单向联合在前两项任务中设计的十分简单，
+交互式联合识别模型则在三项任务中都有超过传统深度学习模型的表现。
+从bert-base和bert-交互式联合识别两组模型的对比中可以看出，相较于基础的softmax分类，在预训练模型上增加针对于语义理解的结构，模型效果会有所提升。
+其中语义槽填充任务效果提升最为明显，原因是该任务相比于分类更为复杂，要求模型对语义理解的精度更高，因此模型之间在此任务之上表现的区分度很高。
+
+对于测试集表现最优的bert-交互式联合识别模型型，我们进行了进一步消融分析。
+
+\begin{table}[htb]
+  \centering
+  \caption{实验结果表}
+  \label{tab:jieguo}
+\begin{tabular}{c|cccc}
+\hline
+ model&Service Acc&Interface Acc&Slot $F_1$&Sentence Acc\\
+ \hline
+ attention-CNN-LSTM&84.37\%&-&-&-\\
+ Transformable-CNN-LSTM&-&82.65\%&-&-\\
+ BiLSTM-attention-CRF&-&-&74.19\%&-\\
+ 单向联合识别模型&82.13\%&82.09\%&81.83\%&78.31\%\\
+ 交互式联合识别模型&86.54\%&85.53\%&83.62\%&80.13\%\\
+ bert-base&93.72\%&91.26\%&88.01\%&87.63\%\\
+ bert-交互式联合识别模型&$\mathbf{95.18\%}$&$\mathbf{94.91}\%$&$\mathbf{92.23}\%$&$\mathbf{91.47}\%$\\
+\hline
+\end{tabular}
+\end{table}
