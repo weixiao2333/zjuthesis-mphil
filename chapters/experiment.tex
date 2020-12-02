@@ -236,7 +236,7 @@ Optimizer&Adam&epochs &20\\
     \caption{实验结果表}
     \label{tab:jieguo}
 \begin{tabular}{c|cccc}
-  \hline
+  \toprule
    model&Service Acc&Interface Acc&Slot $F_1$&Sentence Acc\\
    \hline
    attention-CNN-LSTM&84.37\%&-&-&-\\
@@ -246,7 +246,7 @@ Optimizer&Adam&epochs &20\\
    交互式联合识别模型&86.54\%&85.53\%&83.62\%&80.13\%\\
    bert-base&93.72\%&91.26\%&88.01\%&87.63\%\\
    bert-交互式联合识别模型&$\mathbf{95.18\%}$&$\mathbf{94.91}\%$&$\mathbf{92.23}\%$&$\mathbf{91.47}\%$\\
-  \hline
+  \bottomrule
   \end{tabular}
 \end{table}
 
@@ -276,7 +276,7 @@ Optimizer&Adam&epochs &20\\
   \caption{消融分析}
   \label{tab:xiaorongjieguo}
 \begin{tabular}{c|cccc}
-\hline
+  \toprule
  model&Service Acc&Interface Acc&Slot $F_1$&Sentence Acc\\
  \hline
  删除bert&86.54\%&85.53\%&83.62\%&80.13\%\\
@@ -287,6 +287,6 @@ Optimizer&Adam&epochs &20\\
  (service,slot)-to-interface&93.52\%&93.77\%&91.08\%&90.31\%\\
  (interface,slot)-to-service&94.53\%&93.81\%&91.12\%&90.02\%\\
  bert-交互式联合识别模型&$\mathbf{95.18\%}$&$\mathbf{94.91}\%$&$\mathbf{92.23}\%$&$\mathbf{91.47}\%$\\
-\hline
+\bottomrule
 \end{tabular}
 \end{table}
