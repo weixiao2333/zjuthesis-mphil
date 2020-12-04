@@ -3,9 +3,10 @@
 事实证明，语言模型预训练对于学习通用语言表示很有用。 作为最新的语言模型预训练模型，BERT在许多语言理解任务中均取得了惊人的成绩，
 使用双向transformer网络结构来预训练语言模型，着眼于单词左右两侧的上下文,具有更强的表达能力。可以通过附加输出层对bert进行微调来完成模型构建。
 在本章，我们希望最大程度的利用bert预训练学到的语义编码能力，来提升第三章中提到的模型的准确率。
+在跨界服务平台中，服务分类，接口分类和参数提取三者具有强相关的特性，对于系统内某一确定的服务，其接口和参数也随之确定。
 
 \section{算法描述}
-向量编解码
+流程图，算法
 
 \section{服务分类、接口分类与参数填充联合识别}
 \subsection{单向联合}
@@ -65,7 +66,7 @@ $c^{D}$表示所有步骤得到的$c_i^{D}$的均值,服务的分类预测可由
 
       \begin{figure}[htbp]
         \centering
-        \includegraphics[scale=0.5]{./images/gate.jpg}
+        \includegraphics[scale=0.3]{./images/gate.jpg}
         \caption{gate结构}
         \label{fig:gate}
       \end{figure}
@@ -263,7 +264,7 @@ bert预训练模型的使用可以避免从头开始训练新模型，它通过�
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=16cm]{./images/bert-base.jpg}
+  \includegraphics[width=13cm]{./images/bert-base.jpg}
   \caption{bert-base联合识别模型}
   \label{fig:bert-base}
 \end{figure}
