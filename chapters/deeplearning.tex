@@ -106,14 +106,6 @@ CNN
   \end{figure}
 
 
-  \begin{figure}[htbp]
-    \centering
-    \includegraphics[scale=0.4]{./images/attcnn.jpg}
-    \caption{服务分类模型中attention层}
-    \label{fig:att-cnn}
-  \end{figure}
-
-
   1)输入层与embedding层
 
   用户输入的语句通过结巴分词工具得到中文词的模型即可完成输入层的任务到达embedding层。之后将文本序列转换为矢量形式的数字表示，word2vec是最常用的方法之一。
@@ -143,6 +135,12 @@ CNN
 经过这一层的处理，用户输入的句子被转换为32×256的二维矩阵A=[$a_{1}$,$a_{2}$,\dots,$a_{32}$],
 其中$a_{i}$=[$a_{i1}$,$a_{i2}$,\dots,$a_{i256}$]是一个中文词经过attention处理的向量表示。
 
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[scale=0.4]{./images/attcnn.jpg}
+  \caption{服务分类模型中attention层}
+  \label{fig:att-cnn}
+\end{figure}
   3)卷积层
 
   由于卷积核的存在，卷积层能够提取出词与词之间的隐藏的语义信息，捕获局部相关性。这里我们仅设置了单层的卷积层，用于捕获序列局部信息并对输入数据的降维。
@@ -188,7 +186,7 @@ CNN
 
 
 \section{基于Transformable-CNN-LSTM的接口分类模型}
-意图分类和服务分类本质上一样都可以视为文本分类问题，我们在处理意图分类问题时没有生搬硬套服务分类模型，而是希望改进以提升性能，因此做了不同的尝试。
+接口分类和服务分类本质上一样都可以视为文本分类问题，我们在处理接口分类问题时没有生搬硬套服务分类模型，而是希望改进以提升性能，因此做了不同的尝试。
 CNN在许多自然语言处理任务中都很有效，常规的CNN不可避免地面临适应特征变换的挑战，这是由于CNN具有许多几何上固定的结构，
 例如卷积层将卷积层形状限制为n-gram，而pooling层会使用solid chunks提取高层语义特征。这些固定的结构为语言表示带来了两个主要限制：所有卷积核和块都是连续的且形状固定的，
 这使CNN难以处理某些复杂的情况，例如非连续或过大的特征，换句话说，它处理不了不符合卷积核形状的特征，传统的CNN无法主动进行调整以适应特征的转换。
@@ -208,7 +206,7 @@ CNN在许多自然语言处理任务中都很有效，常规的CNN不可避免�
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[scale=0.5]{./images/tran-cnn-lstm.jpg}
+  \includegraphics[scale=0.4]{./images/tran-cnn-lstm.jpg}
   \caption{接口分类模型}
   \label{fig:tran-cnn-lstm}
 \end{figure}
@@ -219,12 +217,6 @@ CNN在许多自然语言处理任务中都很有效，常规的CNN不可避免�
 因此每一个需要匹配系统内服务的用户输入的句子就构成了一个32×256的二维矩阵E=[$e_{1}$,$e_{2}$,\dots,$e_{32}$],
 其中$e_{i}$=[$e_{i1}$,$e_{i2}$,\dots,$e_{i256}$]是一个中文词经过word2vec处理的向量表示。
 
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[scale=0.4]{./images/tansconv.jpg}
-  \caption{接口分类模型中的transformable conv层}
-  \label{fig:tansconv}
-\end{figure}
 
 2)可转换卷积层
 
@@ -261,6 +253,12 @@ K(p, q)=\max (0,1-|p-q|)
 共设置了128个卷积核，宽度与词向量长度一致，高度分为[2,3,4]不等，选用ReLU作为非线性激活函数，本层结束将得到128个大小不一的长条状feature maps.
 
 
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[scale=0.4]{./images/tansconv.jpg}
+  \caption{接口分类模型中的transformable conv层}
+  \label{fig:tansconv}
+\end{figure}
 3)可转换池化层
 
 

@@ -15,15 +15,8 @@ Word2Vec使用浅层神经网络学习单词嵌入，由Tomas Mikolov于2013年�
   为了具有相似的输出，这些单词在隐藏层中计算出的单词矢量必须相似，因此Word2Vec的原理是为相似上下文中的单词学习相似的单词向量。
 Word2Vec能够捕获单词之间的多个不同维度的相似度，从而可以使用词向量来表示语义和句法模式。
 可以通过对这些单词的词向量进行代数运算来生成诸如“男人之于女人等于兄弟之于姐妹”的模式，
-从而使“兄弟”-“男人” +“女人”的词向量与“姐妹”的词向量表示十分接近，如图\ref{fig:linear-relationships}所示。
+从而使“兄弟”-“男人” +“女人”的词向量与“姐妹”的词向量表示十分接近。
 
-
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[scale=0.5]{./images/linear-relationships.jpg}
-  \caption{词向量之间关系\cite{mikolov2013distributed}}
-  \label{fig:linear-relationships}
-\end{figure}
 
 
 Word2Vec是一种从原始文本中学习单词嵌入的计算效率特别高的预测模型，
@@ -40,13 +33,13 @@ Skip-Gram模型：给定一个处在句子中单词，Skip-gram模型的训练�
   % \centering
   % \hspace{-7mm}
   \subfloat[CBOW]{
-  \includegraphics[width=10cm]{./images/CBOW.jpg}
+  \includegraphics[width=8cm]{./images/CBOW.jpg}
   \label{fig:CBOW}
   }
   % \hspace{5pt}
     % \hspace{+5mm}
   \subfloat[skip-gram]{
-  \includegraphics[width=7cm]{./images/skip.jpg}
+  \includegraphics[width=6cm]{./images/skip.jpg}
   \label{fig:skip}
   }
   \caption{两种词向量模型\cite{mikolov2013distributed}}
@@ -71,7 +64,7 @@ RNN有一个“内存”，可以记住有关已计算内容的所有信息。�
 \begin{figure}[htbp]
   \centering
   \includegraphics[scale=0.5]{./images/rnn.jpg}
-  \caption{RNN}
+  \caption{循环神经网络}
   \label{fig:rnn}
 \end{figure}
 
@@ -115,7 +108,7 @@ LSTM也具有这种链状结构，但是重复模块具有与传统rnn不同的�
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[scale=0.5]{./images/LSTM.jpg}
+  \includegraphics[scale=0.8]{./images/LSTM.jpg}
   \caption{LSTM单元模块\cite{sundermeyer2012lstm}}
   \label{fig:LSTM}
 \end{figure}
@@ -172,7 +165,7 @@ self-attention是attention的变种，适用于文本分类等场景，通过计
 自我关注机制允许输入彼此交互“自我”并找出他们应该更多关注的对象，输出是这些交互作用和注意力得分的加权和。
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=16cm]{./images/attention.png}
+  \includegraphics[width=13cm]{./images/attention.png}
   \caption{attention机制}
   \label{fig:attent}
 \end{figure}
