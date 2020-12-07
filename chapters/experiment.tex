@@ -1,5 +1,5 @@
 \chapter{实验与讨论}
-本章对前面提到的所有模型都设计了相应的实验，同时做了多组对照试验，以验证我们对模型改进的可行性和有效性。
+本章对前面提到的所有模型设计了相应的实验，同时做了多组对照试验，以验证模型改进的可行性和有效性。
 
 \section{实验数据集与预处理}
 \subsection{实验数据集}
@@ -158,7 +158,7 @@ Optimizer&Adam&&\\
 \hline
 learning rate&5e-4&batch size&64\\
 Optimizer&Adam&epochs &20\\
-
+堆叠层数N&2&&\\
 \hline
 \end{tabular}
 \end{table}
@@ -171,7 +171,7 @@ Optimizer&Adam&epochs &20\\
 测试集用来评估模型最终的泛化能力，不作为调参、特征等算法相关的选择依据。测试阶段加载训练好的模型参数，数据输入进入网络得到预测结果。
 \begin{figure}[htbp]
   \centering
-  \includegraphics[scale=0.5]{./images/word2vecTrain.jpg}
+  \includegraphics[scale=0.4]{./images/word2vecTrain.jpg}
   \caption{基于词向量模型的实验流程}
   \label{fig:word2vecTrain}
 \end{figure}
@@ -182,7 +182,7 @@ Optimizer&Adam&epochs &20\\
 测试集用来评估模型最终的泛化能力，不作为调参、特征等算法相关的选择依据。测试阶段加载训练好的模型参数和预训练参数，数据输入进入网络得到预测结果。
 \begin{figure}[htbp]
   \centering
-  \includegraphics[scale=0.5]{./images/bertTrain.jpg}
+  \includegraphics[scale=0.4]{./images/bertTrain.jpg}
   \caption{引入预训练模型的实验流程}
   \label{fig:bertTrain}
 \end{figure}
@@ -235,17 +235,17 @@ Optimizer&Adam&epochs &20\\
     \centering
     \caption{实验结果表}
     \label{tab:jieguo}
-\begin{tabular}{c|cccc}
+\begin{tabular}{l|cccc}
   \toprule
    model&Service Acc&Interface Acc&Slot $F_1$&Sentence Acc\\
    \hline
-   attention-CNN-LSTM&84.37\%&-&-&-\\
-   Transformable-CNN-LSTM&-&82.65\%&-&-\\
-   BiLSTM-attention-CRF&-&-&74.19\%&-\\
-   单向联合识别模型&82.13\%&82.09\%&81.83\%&78.31\%\\
-   交互式联合识别模型&86.54\%&85.53\%&83.62\%&80.13\%\\
+   ATT-CLSTM&84.37\%&-&-&-\\
+   Trans-CLSTM&-&82.65\%&-&-\\
+   BLSTM-ATT-CRF&-&-&74.19\%&-\\
+   slot-oriented&82.13\%&82.09\%&81.83\%&78.31\%\\
+   co-interactive&86.54\%&85.53\%&83.62\%&80.13\%\\
    bert-base&93.72\%&91.26\%&88.01\%&87.63\%\\
-   bert-交互式联合识别模型&$\mathbf{95.18\%}$&$\mathbf{94.91}\%$&$\mathbf{92.23}\%$&$\mathbf{91.47}\%$\\
+   bert-co-interactive&$\mathbf{95.18\%}$&$\mathbf{94.91}\%$&$\mathbf{92.23}\%$&$\mathbf{91.47}\%$\\
   \bottomrule
   \end{tabular}
 \end{table}
