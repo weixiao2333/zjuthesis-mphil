@@ -44,8 +44,6 @@ SMP2019ECDT数据集中与跨界服务平台系统内八大服务相关的数据
 每个人对同一语义的表达会有差异，有差异的数据对训练出泛化能力好的数据是大有裨益的。最终经过课题组同学的努力，共构建了19145条数据组成实验
 数据集，每条数据都包含服务类别标签、接口类别标签和参数（语义槽）标签。
 
-
-
 \subsection{预处理}
 
 \section{评价指标}
@@ -189,7 +187,27 @@ Optimizer&Adam&epochs &20\\
 
 
 \section{实验结果与分析}
-模型训练过程中的损失函数Loss曲线变化如图所示，可以只列两个，预训练
+
+\begin{figure}[htbp]
+  % \centering
+  % \hspace{-7mm}
+  \subfloat[ATT-CLSTM loss值变化曲线]{
+  \includegraphics[width=8cm]{./images/bad.png}
+  \label{fig:88888}
+  }
+  % \hspace{5pt}
+    % \hspace{+5mm}
+  \subfloat[BERT-base loss值变化曲线]{
+  \includegraphics[width=8cm]{./images/good.png}
+  \label{fig:88}
+  }
+  \caption{训练集loss值变化曲线}
+  \label{fig:loss}
+  \end{figure}
+
+本实验模型众多且多数模型loss曲线走势相近，我们从结果中选择两类
+有代表性的曲线走势展开分析，分别是基于词向量模型的ATT-CLSTM和基于bert的BERT-base，他们的损失函数Loss曲线变化如图\ref{fig:loss}所示，
+可以看到经过多轮迭代后模型得到充分训练并趋于收敛，但结合了预训练模型的BERT-base相比于词向量的模型loss在收敛时震荡更小，收敛更快，最终结果也更优。
 
 \begin{figure}[htbp]
   % \centering
@@ -258,7 +276,23 @@ Optimizer&Adam&epochs &20\\
 slot-oriented联合识别模型由于获得了服务类别和接口类别信息，在参数提取（语义槽填充）任务上的$F_1$值相较于BiLSTM-attention-CRF有所提升，前两项任务表现
 不佳是由于服务和接口的分类预测时并没有获得其他任务的决策信息增益，相反的，单向联合在前两项任务中设计的十分简单，
 co-interactive联合识别模型则在三项任务中都有超过传统深度学习模型的表现。
-
+\begin{figure}[htbp]
+   \centering
+  % \hspace{-7mm}
+  \subfloat[第一层]{
+  \includegraphics[width=8cm]{./images/first.png}
+  \label{fig:777}
+  }\\
+  % \hspace{5pt}
+    % \hspace{+5mm}
+    \centering
+  \subfloat[第二层]{
+  \includegraphics[width=8cm]{./images/second.png}
+  \label{fig:77777}
+  }
+  \caption{协同交互层slot向量可视化}
+  \label{fig:visual}
+  \end{figure}
 从bert-base和bert-co-interactive联合识别两组模型的对比中可以看出，相较于基础的softmax分类，在预训练模型上增加针对于语义理解的结构，模型效果会有所提升。
 其中语义槽填充任务效果提升最为明显，原因是该任务相比于分类更为复杂，要求模型对语义理解的精度更高，因此模型之间在此任务之上表现的区分度很高。
 
@@ -328,3 +362,15 @@ co-interactive联合识别模型则在三项任务中都有超过传统深度学
   \caption{bert-co-interactive不同堆叠层数模型性能比较}
   \label{fig:layerCompare}
   \end{figure}
+
+  为了更好地了解模型学到了什么，让模型的设计更具可解释性，我们将co-interactive联合识别模型的协同交互层部分矩阵做了可视化处理\ref{fig:visual}。
+  对于参数提取（语义槽填充）任务，在co-interactive联合识别模型的协同交互层中进行信息交互时，主要做了
+  参数填充向量视为查询$Q_S$，服务分类向量视为键$K_D$以及值$K_D$，以获取可感知参数填充信息的服务分类向量表示信息并反馈给参数填充任务；
+接口分类向量视为键$K_I$以及值$K_I$，以获取可感知参数填充信息的接口向量表示信息并反馈给参数填充任务。
+  为此，我们将$Q_S$，$K_D$，$K_D$计算后的矩阵可视化，它表示了服务分类向量指导下各语义槽受到的注意力分布，
+  从图中可以观察到：（1）我们的模型在服务类别向量“train”指导下正确地将注意权重完全集中在正确的语义槽（“成都”和“杭州”）上，
+  这表明协同交互层任务间注意力机制可以指导模型学习。
+  （2）使用更深的层（第二层）可以更好地帮助模型捕获相关的语义槽，与第一层相比，注意力着色更暗（表明得分高），
+  这是因为协同交互模块堆叠在一起形成层次结构，使任务之间能够进行多次交互，从而实现增量捕获交互信息来达到彼此丰富。
+
+  \section{本章小结}
