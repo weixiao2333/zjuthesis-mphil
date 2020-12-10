@@ -1,5 +1,25 @@
 \begin{englishabstract}
-Rake is good. My rake has nine prongs. Rake can be used in farm. Blur, blur, blur...
+The update of artificial intelligence technology is continuously affecting people's lives,
+In recent years, more and more users have adopted man-machine dialogue to efficiently obtain high-quality services. 
+The cross-border service platform is a support system for the integration of various cross-border services,
+It deeply integrates and innovates services across different industries, organizations, value chains and other boundaries, 
+and provides users with multi-dimensional, high-quality, and valuable cross-border services, 
+and has become an important innovative way for the development of modern service industry. 
+Compared with traditional service integration, cross-border service integration requires multi-dimensional 
+and in-depth integration of modes, ecology, environment, quality, and value, 
+resulting in a wide variety of internal services and a huge number of users. 
+When a user enters the system and faces a service of this magnitude, it takes a lot of time for the user to retrieve the service wanted.
+At the same time, it is impossible to quickly find the service that matches intention, 
+so how to improve user's experience when retrieving the service becomes a problem.
+
+With the help of the idea of ​​man-machine dialogue, this paper introduces a service intelligent invocation engine into the cross-border service platform. 
+A user can enter the platform and enter sentences with intentions, such as "Query train tickets from Chengdu to Hangzhou",
+then the service intelligent invocation engine will perform three tasks including service classification, interface classification 
+and parameter extraction (semantic slot filling) after receiving the sentence. 
+Identify and find out the matching service within the system, extract the necessary parameters for the service call from the sentence to complete the call and return the result, thereby solving the problem of user retrieval service difficulty
+Semantic understanding, 
+
+The core of the service intelligent call engine is semantic understanding. The performance of the semantic understanding model is an important criterion to measure the intelligence of the calling engine. The result of semantic understanding also directly affects service retrieval and subsequent service invocation. At present, Chinese semantic understanding tasks have many difficulties, such as lack of sufficient relevant data sets for specific downstream tasks, user expression intentions are ambiguous, arbitrary and irregular, and polysemous, etc. Therefore, relevant research is closely watched, and semantic understanding is used as natural language processing. It is a cornerstone task of the field, and its research has great scientific research significance and applied uses. In view of the lack of Chinese corpus in the field of cross-border services, this paper builds a semantic understanding data set in the field of cross-border services with the help of search engines and members of the research team on the basis of public data sets. The expanded data set contains 8 service categories, and each corpus contains the corresponding service category, interface category and semantic slot annotations, a total of 19145 pieces of data. At the same time, this paper proposes an end-to-end service classification, interface classification and parameter extraction three task interactive joint recognition model, and introduces bert as a pre-training model for fine-tuning, and a model that is processed independently of the three tasks and a model based on word2vec. The control experiment verified the feasibility and superiority of the model. Among them, the best-performing bert-co-interactive model Sentence Acc reached 91.47\%. In order to apply the algorithm to practice, relying on the prototype system JTangYdrail of the sub-project "Cross-border Service Integration Methods and Support Carriers" of the national key research and development plan "Modern Service Industry Common Key Technology Research and Development and Application Demonstration", the service intelligent call engine is designed. The system architecture allows the engine to be integrated with the existing platform.
 
 \englishkeywords{rake, cost, \XeTeX}
 \end{englishabstract}

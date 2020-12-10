@@ -5,14 +5,9 @@
 在跨界服务平台设计并实现了服务智能调用引擎，本章主要对跨界服务平台和智能调用引擎进行介绍。
 
 \section{跨界服务系统}
-本文作者所在的课题组系统性地研究了跨界服务相关理论，并形成了跨界服务原型系统JTangYdrail（图\ref{fig:logo}），
+本文作者所在的课题组系统性地研究了跨界服务相关理论，并形成了跨界服务原型系统，
 本节主要介绍系统整体架构以及跨界服务系统中两个核心模块服务交换机和服务路由器。
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=6cm]{./images/jianmu.jpg}
-    \caption{跨界服务系统 logo}
-    \label{fig:logo}
-  \end{figure}
+
   跨界服务系统是针对跨界服务运行时呈现高维异构、复杂动态、开放分布的特点，解决跨界服务网络管理中高效接入、安
   全交换、智能路由等关键技术，形成的跨界服务集成工程化方法，研制软硬件结合的跨
   界服务集成及运行支撑载体，包括跨界服务集成设计软件套件、服务交换机与路由器硬
@@ -117,5 +112,85 @@
 服务的调用并返回结果到结果处理器，经结果处理器封装的最终结果会返回给用户。
 
 \section{系统原型展示}
-在跨界服务理论基础上，实现了跨界服务网络平台的原型系统
+在跨界服务理论基础上，实现了跨界服务网络平台的原型系统，系统被命名为JTangYdrail（图\ref{fig:logo}）。
+跨界服务网络与支撑载体系统依托于课题《跨界服务集成方法与支撑载体》，包含跨界服务交换机子系统、跨界服务路由器子系统和
+跨界服务网络子系统。通过跨界服务交换机子系统，可以实现企业服务的包装、开放、部署和管理，并提供相关原生工具；通过跨界服务路由器
+子系统，可以实现服务路由器的管理与可视化监控，实时掌握当前路由器的运行情况；通过跨界网络子系统，可以实现对全局
+所有自网络及其关联的服务交换机和服务路由器的动态监控，并可对子网络进行管理。
+
+\begin{figure}[htbp]
+  \subfloat[JTangYdrail 首页]{
+    \centering
+    \includegraphics[width=8cm]{./images/ketisan.png}
+    \label{fig:ketisan}
+  }
+  \subfloat[JTangYdrail logo]{
+    \centering
+  \includegraphics[width=8cm]{./images/jianmu.jpg}
+  \label{fig:logo}
+  }
+  \caption{JTangYdrail总览}
+  \end{figure}
+  如图所示，JTangYdrail系统主要包含服务交换机管理、服务交换机工具和服务智能调用三个模块\ref{fig:sangemokuai}。
+  服务交换机管理模块是系统的核心部分，主要包括服务管理，流程管理，申请管理和用户管理等功能，管理跨界服务网络中与服务相关
+  的所有信息；服务交换机工具工具模块包括标注服务映射，物联网服务，服务包装等功能，这些功能均以工具形式嵌入JTangYdrail系统，
+  是系统的附加能力；服务智能调用是与本文相关的模块，在跨界服务网络中暴露智能调用的能力，对用户输入的语句识别后智能执行相应的服务。
+
+  \begin{figure}[htbp]
+    \centering
+    \includegraphics[width=17cm]{./images/sangemokuai.png}
+    \caption{JTangYdrail 主要模块}
+    \label{fig:sangemokuai}
+  \end{figure}
+
+\subsection{服务交换机管理模块}
+本模块是系统的核心部分，进入系统后，点击服务详情页面对服务做CRUD,mapping,api management,test等一系列相关管理操作，
+以及查看服务API的interface信息，parameter信息和SDK信息等。
+
+如图\ref{fig:fuwuguanli}为服务管理模块的展示，服务管理的主要功能为：　
+总览当前交换机内部所有服务的信息和实现对服务的增删改以及设置服务启用状态，
+流程管理的主要功能为总览当前交换机内部所有流程的信息和实现对流程的增删改以及设置流程状态，
+服务申请管理主要包含
+企业对外进行服务申请需要的界面，可以申请其他服务交换机上的服务并实时反馈对方的审核信息，
+部门管理的主要功能为
+管理服务交换机中的各个部门，包括对部门信息的增删改查以及查看挂载在部门下的服务，
+外部服务审批管理的主要功能为审核外部服务申请。
+\begin{figure}[htbp]
+  \subfloat[服务管理]{
+    \centering
+    \includegraphics[width=8.3cm]{./images/fuwuguanli1.png}
+    \label{fig:fuwuguanli1}
+  }
+  \subfloat[服务详情]{
+    \centering
+  \includegraphics[width=8cm]{./images/fuwuguanli2.png}
+  \label{fig:fuwuguanli2}
+  }
+  \caption{服务交换机管理模块}
+  \label{fig:fuwuguanli}
+  \end{figure}
+
+  \subsection{服务交换机工具模块}
+  本模块包括标准服务映射，物联网服务，服务包装等功能，其中标准服务映射是核心。
+  标准服务映射围绕在研究跨界服务集
+  成和交互过程中发现的 Web API 描述文档缺乏、描述方式不一致等导致的集成困难、难以
+  交互，以及服务使用者使用 Web API 过程中遇到的门槛较高、难以上手，需要根据自身需
+  求进行包装和定制操作，同类服务难以选择，以及 Web API 演化导致的应用失败等实际问
+  题进行了深入的研究和分析，提出了一套以服务映射为基础的自定义服务的解决方案，不但能够有效解决跨系统的 Web API 集成问题，而且提出了以用
+  户为中心的 Web API 的使用方式，能够大大简化和改善用户使用 Web API 的流程和体验，
+还能够避免 Web API 演化带来的应用失败的问题。
+  \begin{figure}[htbp]
+    \subfloat[标准服务映射]{
+      \centering
+      \includegraphics[width=8cm]{./images/fuwugongju1.png}
+      \label{fig:fuwugongju1}
+    }
+    \subfloat[物联网服务]{
+      \centering
+    \includegraphics[width=8cm]{./images/fuwugongju2.png}
+    \label{fig:fuwugongju2}
+    }
+    \caption{服务交换机工具模块}
+    \label{fig:fuwugongju}
+    \end{figure}
 \section{本章小结}
