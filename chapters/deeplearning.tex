@@ -96,7 +96,7 @@ CNN
 因此在本文中，我们将attention层放在卷积层之前，
 用于自动捕获长期上下文信息和非连续词之间的相关性，而无需任何外部语法信息。
 
-综上所述本节将三者结合各取所长， 采用ATT-CLSTM模型\ref{fig:cnn-lstm}用以解决服务分类问题，下面将详细介绍该模型
+综上所述本节将三者结合各取所长， 采用ATT-CLSTM模型\ref{fig:cnn-lstm}用以解决服务分类问题，下面将详细介绍该模型：
 
 \begin{figure}[htbp]
     \centering
@@ -287,9 +287,10 @@ K(p, q)=\max (0,1-|p-q|)
 同时我们选择条件随机场作为解码器，CRF考虑邻域标记之间的相关性，并针对给定输入语句联合解码得到最佳标记链。
 综上所述，本节采用引入字向量的BLSTM-ATT-CRF模型\ref{fig:blstm-att-crf}解决参数填充问题，下面将详细介绍该模型：
 
+
 \begin{figure}[htbp]
   \centering
-  \includegraphics[scale=0.5]{./images/blstm-att-crf.jpg}
+  \includegraphics[width=15cm]{./images/blstm-att-crf.jpg}
   \caption{参数填充模型}
   \label{fig:blstm-att-crf}
 \end{figure}

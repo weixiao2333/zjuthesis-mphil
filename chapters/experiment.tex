@@ -215,25 +215,25 @@ Optimizer&Adam&epochs &20\\
   % \centering
   % \hspace{-7mm}
   \subfloat[服务Service分类的accuracy曲线]{
-  \includegraphics[width=8.6cm]{./images/serviceAccuracy.jpg}
+  \includegraphics[width=8cm]{./images/serviceAccuracy.jpg}
   \label{fig:serviceAccuracy}
   }
   % \hspace{5pt}
     % \hspace{+5mm}
   \subfloat[接口Interface分类的accuracy曲线]{
-  \includegraphics[width=8.6cm]{./images/interfaceAccuracy.jpg}
+  \includegraphics[width=8cm]{./images/interfaceAccuracy.jpg}
   \label{fig:interfaceAccuracy}
   }\\
   % \hspace{5pt}
   %  \hspace{-7mm}
   \subfloat[语义槽填充的$F_1$曲线]{
-  \includegraphics[width=8.6cm]{./images/slotF1.jpg}
+  \includegraphics[width=8cm]{./images/slotF1.jpg}
   \label{fig:slotF1}
   }
   % \hspace{5pt}
   %  \hspace{+5mm}
   \subfloat[句子整体的accuracy曲线]{
-  \includegraphics[width=8.6cm]{./images/sentenceAccuracy.jpg}
+  \includegraphics[width=8cm]{./images/sentenceAccuracy.jpg}
   \label{fig:sentenceAccuracy}
   }
   \caption{训练集上各模型指标值的变化}
@@ -375,4 +375,7 @@ co-interactive联合识别模型则在三项任务中都有超过传统深度学
   （2）使用更深的层（第二层）可以更好地帮助模型捕获相关的语义槽，与第一层相比，注意力着色更暗（表明得分高），
   这是因为协同交互模块堆叠在一起形成层次结构，使任务之间能够进行多次交互，从而实现增量捕获交互信息来达到彼此丰富。
 
-  % \section{本章小结}
+  \section{本章小结}
+  本章介绍了跨界服务领域数据集的构建，对数据集的预处理划分和实验结果的评价指标，
+对前两章提出的模型进行了实验，其中进行了多组对照得出bert-co-interactive具有更好的性能，同时对bert-co-interactive
+做了消融实验分析各结构对性能的影响。
