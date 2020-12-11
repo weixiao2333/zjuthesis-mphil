@@ -55,7 +55,8 @@ iterations = M 和每一批的样本数 batchsize、迭代次数 epoch = N 和�
 如图\ref{fig:lianhe}所示，设slot-oriented联合识别模型输入的词序列是x=[$x_{1}$,$x_{2}$,\dots,$x_{T}$],$x_{i}$经过双向LSTM处理后
 得到的结果是$\overleftarrow{\mathbf{h}}_{i}$和$\overrightarrow{\mathbf{h}}_{i}$，
 拼接以后在第i步得到的结果是$\mathbf{h}_{i}=[\overrightarrow{\mathbf{h}}_{i} ;\overleftarrow{\mathbf{h}}_{i}]$。
-1)attention层
+
+（1）attention层
 
 我们在联合模型中共设置了三层注意力机制，分别用于服务分类、接口分类与参数填充，三者的attention原理相同，只是会训练各自的参数，因此可以合并介绍。
 设BLSTM得到的隐层向量序列为$h_{1}$,$h_{2}$,\dots,$h_{T}$,我们引入上下文向量${c}_{i}$来表示经过attention权重$α_{i,j}$和处理后的BLSTM隐层向量，
@@ -72,9 +73,9 @@ iterations = M 和每一批的样本数 batchsize、迭代次数 epoch = N 和�
     \end{equation}
 显然这里的$\mathbf{W}$可根据任务具体分为$\mathbf{W}_D$,$\mathbf{W}_I$,$\mathbf{W}_S$
 
-2)服务分类
+（2）服务分类
 
-我们以1)中计算服务分类上下文向量的方法可以得到${c}_{i}^{D}$，再从BLSTM中取$\overleftarrow{\mathbf{h}}_{1}$和$\overrightarrow{\mathbf{h}}_{T}$,
+我们以（1）中计算服务分类上下文向量的方法可以得到${c}_{i}^{D}$，再从BLSTM中取$\overleftarrow{\mathbf{h}}_{1}$和$\overrightarrow{\mathbf{h}}_{T}$,
 $c^{D}$表示所有步骤得到的$c_i^{D}$的均值,服务的类别预测可由下式得到：
 \begin{equation}
     y^{D}=\operatorname{softmax}\left(W^{D}\left(\overleftarrow{\mathbf{h}}_{1}+\overrightarrow{\mathbf{h}}_{T}+c^{D}\right)\right)
@@ -82,9 +83,9 @@ $c^{D}$表示所有步骤得到的$c_i^{D}$的均值,服务的类别预测可由
   \begin{equation}
     c^{D}=\frac{1}{T}\sum_{i=1}^{T} c_i^{D}
   \end{equation}
-3)接口分类
+（3）接口分类
 
-  我们以1)中计算接口分类上下文向量的方法可以得到${c}_{i}^{D}$，再从BLSTM中取$\overleftarrow{\mathbf{h}}_{1}$和$\overrightarrow{\mathbf{h}}_{T}$,
+  我们以（1）中计算接口分类上下文向量的方法可以得到${c}_{i}^{D}$，再从BLSTM中取$\overleftarrow{\mathbf{h}}_{1}$和$\overrightarrow{\mathbf{h}}_{T}$,
   $c^{I}$表示所有步骤得到的$c_i^{I}$的均值,接口的类别预测可由下式得到：
   \begin{equation}
       y^{I}=\operatorname{softmax}\left(W^{I}\left(\overleftarrow{\mathbf{h}}_{1}+\overrightarrow{\mathbf{h}}_{T}+c^{I}\right)\right)
@@ -100,7 +101,7 @@ $c^{D}$表示所有步骤得到的$c_i^{D}$的均值,服务的类别预测可由
         \label{fig:gate}
       \end{figure}
 
-4)参数提取
+（4）参数提取
 
 如图\ref{fig:gate}中的gate，我们引入参数提取的控制门利用服务类型上下文向量${c}_{i}^{D}$和接口类型上下文向量${c}_{i}^{I}$来建模服务、接口与参数填充的关系
 以期提高参数提取的准确率。${c}^{D}$,${c}^{I}$,${c}_{i}^{S}$会在每一个步长传入gate结构中计算:
@@ -114,7 +115,7 @@ $c^{D}$表示所有步骤得到的$c_i^{D}$的均值,服务的类别预测可由
     y_{i}^{S}=\operatorname{softmax}\left(W_{h y}^{S}\left(h_{i}+c_{i}^{S} \cdot g\right)\right)
   \end{equation}
 
-5)联合目标函数
+（5）联合目标函数
 
 为了同时完成服务分类、接口分类与参数填充三项任务，需要建立联合损失函数，假设$y^D,y^I,y^S$表示正确的类别与标注，我们的目标
 便是使在输入为$\mathbf{x}$的条件下概率$p\left(y^{S}, y^{I},y^{D} \mid \mathbf{x}\right)$最大：
@@ -155,13 +156,13 @@ $c^{D}$表示所有步骤得到的$c_i^{D}$的均值,服务的类别预测可由
 
 交互式联合识别模型的结构如图\ref{fig:lianhe2}所示，主要包含的部分是：共享编码层，注意力层，协同交互层，独立解码层，接下将分别介绍：
 
-1)共享编码层
+（1）共享编码层
 
 我们使用双向LSTM作为编码器，设输入词序列是x=[$x_{1}$,$x_{2}$,\dots,$x_{n}$](n为词的数量)，$x_{i}$经过双向LSTM处理后
 得到的结果是$\overleftarrow{\mathbf{h}}_{i}$和$\overrightarrow{\mathbf{h}}_{i}$，拼接以后在第i步得到的结果是$\mathbf{h}_{i}=[\overrightarrow{\mathbf{h}}_{i} ;\overleftarrow{\mathbf{h}}_{i}]$,
 因此编码后得到的矩阵为$\mathbf{H}$=[$h_{1}$,$h_{2}$,\dots,$h_{n}$]。
 
-2)自注意力层
+（2）自注意力层
 
 我们为服务分类、接口分类和参数填充三个任务分别引入了自注意力机制，将自注意力层处理以后得到的向量作为相应任务的矩阵表示传入协同交互层。
 三者的attention原理相同，只是会训练各自的参数，因此可以合并介绍。
@@ -182,7 +183,7 @@ $c^{D}$表示所有步骤得到的$c_i^{D}$的均值,服务的类别预测可由
 \end{equation}
 这里H根据训练时参数的不同分为三类$\mathbf{H}_{D},\mathbf{H}_{I},\mathbf{H}_{S}$,分别表示服务分类、接口分类向参数填充三项任务语义相关的显示的矩阵表示。
 
-3)协同交互层
+（3）协同交互层
 
 本层是多个任务的信息流建立信息交换的核心层，上层共得到三个矩阵$\mathbf{H}_{D},\mathbf{H}_{I},\mathbf{H}_{S}$，他们是任务相关的独立的语义表示，本层主要目的
 是在借助其他两项任务指导下更新当前任务对应的H矩阵，达到交互信息流的目的，提高模型准确率。
@@ -223,7 +224,7 @@ $c^{D}$表示所有步骤得到的$c_i^{D}$的均值,服务的类别预测可由
 实现了多任务之间信息的交互。
 同时如图中标识（N×），N为超参数，协同交互层可堆叠在一起形成层次结构，使任务之间能够进行多次交互，实现增量捕获交互信息来达到彼此丰富。
 
-4)独立解码层
+（4）独立解码层
 
 在经过共享的协同交互层以后，各任务拥有自己独立的解码层。
 对于服务分类任务，我们使用上一章介绍的CNN的max-pooling方法，将$\mathbf{H}_{D}$经过max-pooling处理得到一个句子语义级表示的向量$\mathbf{M}_D$,
@@ -340,4 +341,4 @@ y_{n}^{s}=\operatorname{softmax}\left(\mathbf{W}^{s} \boldsymbol{h}_{n}+\boldsym
 
 
 % \section{结合ernie的模型}
-\section{本章小结}
+% \section{本章小结}

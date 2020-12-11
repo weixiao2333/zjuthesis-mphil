@@ -26,25 +26,27 @@ SMP2019ECDT数据集中与跨界服务平台系统内八大服务相关的数据
 如图\ref{fig:baidu}，\ref{fig:bing}所示,想要扩展火车服务的查询接口的语料数据，再搜索引擎输入“成都到杭州火车”，利用搜索引擎的联想补全功能
 达到扩充的目的。
 
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=15cm]{./images/baidu.png}
-    \caption{数据横向扩充图1}
-    \label{fig:baidu}
-  \end{figure}
 
   \begin{figure}[htbp]
-    \centering
-    \includegraphics[width=15cm]{./images/bing.png}
-    \caption{数据横向扩充图2}
-    \label{fig:bing}
-  \end{figure}
+    \subfloat[搜索引擎百度]{
+      \centering
+    \includegraphics[width=8cm]{./images/baidu.png}
+    
+    \label{fig:baidu}
+    }
+    \subfloat[搜索引擎bing]{
+      \centering
+    \includegraphics[width=8cm]{./images/bing.png}
+    }
+    \caption{数据横向扩充图}
+    \label{fig:fuwuguanli}
+    \end{figure}
 
 数据集纵向扩充是组织跨界服务课题组和实验室同学填写问卷，让被调研者输入相应服务的查询语句，收集起来对语句进行人工标注，完成数据集的扩容。
 每个人对同一语义的表达会有差异，有差异的数据对训练出泛化能力好的数据是大有裨益的。最终经过课题组同学的努力，共构建了19145条数据组成实验
 数据集，每条数据都包含服务类别标签、接口类别标签和参数（语义槽）标签。
 
-\subsection{预处理}
+% \subsection{预处理}
 
 \section{评价指标}
 评价指标用于评估模型的性能，对于服务分类任务，本文采用准确率（Accuracy）来评估模型；对于接口分类
@@ -373,4 +375,4 @@ co-interactive联合识别模型则在三项任务中都有超过传统深度学
   （2）使用更深的层（第二层）可以更好地帮助模型捕获相关的语义槽，与第一层相比，注意力着色更暗（表明得分高），
   这是因为协同交互模块堆叠在一起形成层次结构，使任务之间能够进行多次交互，从而实现增量捕获交互信息来达到彼此丰富。
 
-  \section{本章小结}
+  % \section{本章小结}
