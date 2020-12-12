@@ -355,7 +355,12 @@ y_{n}^{s}=\operatorname{softmax}\left(\mathbf{W}^{s} \boldsymbol{h}_{n}+\boldsym
 
 该模块的目的是从知识库中检索相关知识。本文以isA关系为例，其他语义关系（如isPropertyOf）也可以类似的方式应用。具体来说，给定一个简短的文本s，我们希望找到与其相关的概念集C。我们通过两个主要步骤来实现此目标：实体链接和概念化。实体链接是NLP中的一项重要任务，用于识别短文本中提到的实体（Moro，Raganato和Navigli 2014）。通过利用现有的实体链接解决方案，我们获得了短文本的实体集E（Chen et al.2018）。然后，对于每个实体e∈E，我们通过概念化从YAGO（Suchanek，Kasneci和Weikum 2008），Probase（Wu等人2012）和CN-Probase（Shuyan 2018）等现有知识库中获取其概念信息。例如，给定一个简短的文字“ Jay and Jolin在台湾出生”，我们通过实体链接获得实体集E = {Jay Chou，Jolin Tsai}。然后，我们将实体Jay Chou概念化，并从CN-Probase获得其概念集C = {人，歌手，演员，音乐家，导演}。
 
-
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=16cm]{./images/kg.png}
+  \caption{引入知识图谱的编码层}
+  \label{fig:kg}
+\end{figure}
 
 \section{本章小结}
 本章利用任务之间存在的强关联性，将服务分类、接口分类和参数填充三项任务做了联合识别，包括单向信息流的联合和交互式联合两种尝试，
