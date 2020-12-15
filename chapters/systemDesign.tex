@@ -27,7 +27,7 @@
   \begin{figure}[htbp]
     \centering
     \includegraphics[width=10cm]{./images/system.png}
-    \caption{JTangYdrail系统架构}
+    \caption{JTangYdrail系统架构\cite{zhanghuan}}
     \label{fig:system}
   \end{figure}
 
@@ -52,18 +52,18 @@
 5）The authentication module：是基于密钥加密技术设计的，并使用基于角色的访问控制策略来保护数据的安全性。
 
   \begin{figure}[htbp]
-    \subfloat[JTangYdrail 服务交换机软件架构]{
+    \subfloat[JTangYdrail 服务交换机软件架构\cite{zhanghuan}]{
       \centering
       \includegraphics[width=8cm]{./images/switchboard.png}
       \label{fig:switchboard}
     }
-    \subfloat[JTangYdrail 服务路由器软件架构]{
+    \subfloat[JTangYdrail 服务路由器软件架构\cite{zhanghuan}]{
       \centering
       \includegraphics[width=8cm]{./images/router.png}
       \label{fig:router}
     }
     \caption{服务交换机和服务路由器架构}
-    \label{fig:loss}
+    \label{fig:switchboardAndRouter}
     \end{figure}
 
 
@@ -86,7 +86,7 @@
   
   
   
-\section{服务智能调用引擎}
+\section{智能服务调用引擎}
 上一节介绍了跨界服务系统，是本文主要依托的平台，本节在系统中提出了以语义理解模块为核心的服务智能调用引擎，基于此实现本文算法与应用的结合。
 在跨界服务网络中，所有的服务都部署在服务交换机上，因此服务智能调用引擎也运行在服务交换机系统内。
 服务智能调用引擎集成在服务交换机系统内运行在跨界服务网络中，因此智能调用的能力是在后端的，与用户使用的终端系统解耦，最终在服务端暴露智能调用的接口供
@@ -111,7 +111,7 @@
 内容包括调用者的权限合法性以及参数信息是否有误等，校验通过以后，调用处理器会带着必要的各项参数向服务执行引擎发送引擎，在跨界服务网络中找到服务源完成本次
 服务的调用并返回结果到结果处理器，经结果处理器封装的最终结果会返回给用户。
 
-\section{系统原型展示}
+\section{原型系统展示}
 在跨界服务理论基础上，实现了跨界服务网络平台的原型系统，系统被命名为JTangYdrail（图\ref{fig:logo}）。
 跨界服务网络与支撑载体系统依托于课题《跨界服务集成方法与支撑载体》，包含跨界服务交换机子系统、跨界服务路由器子系统和
 跨界服务网络子系统。通过跨界服务交换机子系统，可以实现企业服务的包装、开放、部署和管理，并提供相关原生工具；通过跨界服务路由器
@@ -193,4 +193,8 @@
     \caption{服务交换机工具模块}
     \label{fig:fuwugongju}
     \end{figure}
-% \section{本章小结}
+\section{本章小结}
+本章首先介绍了跨界服务网络的系统架构以及其核心组件服务交换机和服务路由器，之后介绍了智能服务调用引擎的系统架构，
+最后展示了课题组目前跨界服务网络平台的原型系统JTangYdrail。
+
+kb实验，摘要，算法，致谢，接口分类图，文字理顺，图片排版，查重，
