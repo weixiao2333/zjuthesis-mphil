@@ -375,6 +375,21 @@ co-interactive联合识别模型则在三项任务中都有超过传统深度学
   （2）使用更深的层（第二层\ref{fig:77777}）可以更好地帮助模型捕获相关的语义槽，与第一层\ref{fig:777}相比，注意力着色更暗（表明得分高），
   这是因为协同交互模块堆叠在一起形成层次结构，使任务之间能够进行多次交互，从而实现增量捕获交互信息来达到彼此丰富。
 
+  \begin{table}[htb]
+    \centering
+    \caption{引入知识库实验结果表}
+    \label{tab:kbjieguo}
+\begin{tabular}{l|cccc}
+  \toprule
+  \multicolumn{1}{c|}{\centering model}&Service Acc&Interface Acc&Slot $F_1$&Sentence Acc\\
+   \hline
+   BERT-co-interactive&$\mathbf{95.18\%}$&$\mathbf{94.91}\%$&$\mathbf{92.23}\%$&$\mathbf{91.47}\%$\\
+   BERT-kb-co-interactive&$\mathbf{95.31\%}$&$\mathbf{95.22}\%$&$\mathbf{94.01}\%$&$\mathbf{92.03}\%$\\
+  \bottomrule
+  \end{tabular}
+\end{table}
+最后，我们对BERT-co-interactive编码层做了改进，引入了知识图谱，对比实验结果如表\ref{tab:kbjieguo}所示。
+
 
   \section{本章小结}
   本章介绍了跨界服务领域数据集的构建，对数据集的预处理划分和实验结果的评价指标，
