@@ -22,18 +22,18 @@
   \end{figure}
 
 \subsection{算法描述}
-基于深度学习的语义理解算法，首先将用户输入的句子利用分词工具转化为词语序列，再用word2vec将词语向量化，
+基于词向量模型的深度学习语义理解算法，首先将用户输入的句子利用分词工具转化为词语序列，再用word2vec将词语向量化，
 固定句子长度后，得到结构化的表示形式x=[$x_{1}$,$x_{2}$,\dots,$x_{T}$]输入网络中，流程如图\ref{fig:questiondesc}所示。
 首先利用服务分类器得到系统内与用户意图相匹配的服务，再通过接口分类器和参数提取器分别做文本分类和语义槽填充处理，最后将三项任务得到
 的结果提交至服务执行引擎做服务调用，算法详细描述如表\ref{tab:suanfa1}。
 
 \begin{table}[htb]
   \centering
-  \caption{基于深度学习的语义理解算法描述}
+  \caption{基于词向量模型的深度学习语义理解算法描述}
   \label{tab:suanfa1}
 \begin{tabular}{p{150mm}}
 \toprule
-\textbf{算法1:}基于深度学习的语义理解\\
+\textbf{算法1:}基于词向量模型的深度学习语义理解算法\\
 \textbf{输入:} $L_0$=\{($S_i$，$y_i^d$，$y_i^i$，$y_i^s$)\}，i $\in$ [1,n]\\
 \textbf{输出:} $Model_{service}$，$Model_{interface}$，$Model_{slot}$\\
 \hline
@@ -52,6 +52,23 @@ iterations = M 和每一批的样本数 batchsize、迭代次数 epoch = N 和�
 \bottomrule
 \end{tabular}
 \end{table}
+
+\begin{algorithm}
+  \caption{把猪八戒放进冰箱}
+  \label{alg:put-into-refri}
+  \begin{algorithmic}[1]
+  \Require N头动物，不知道是不是猪八戒  \Comment{我是注释} 
+  \Ensure 你造吗，这个程序木有输出，想怎样？
+  \State 先热热身:)
+  \For{$i=1,\dots ,N$} \Comment{我是个For循环}
+  \If {是猪八戒}
+    \State 打开冰箱门，把第$i$个放进冰箱，关上冰箱门
+  \Else 
+    \State 下一个
+  \EndIf
+  \EndFor
+  \end{algorithmic}
+  \end{algorithm}
 
 \section{预处理}
 \subsection{序列化}
