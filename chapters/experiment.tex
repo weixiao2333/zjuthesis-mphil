@@ -383,13 +383,15 @@ co-interactive联合识别模型则在三项任务中都有超过传统深度学
   \toprule
   \multicolumn{1}{c|}{\centering model}&Service Acc&Interface Acc&Slot $F_1$&Sentence Acc\\
    \hline
-   BERT-co-interactive&$\mathbf{95.18\%}$&$\mathbf{94.91}\%$&$\mathbf{92.23}\%$&$\mathbf{91.47}\%$\\
+   BERT-co-interactive&$95.18\%$&$94.91\%$&$92.23\%$&$91.47\%$\\
    BERT-kb-co-interactive&$\mathbf{95.31\%}$&$\mathbf{95.22}\%$&$\mathbf{94.01}\%$&$\mathbf{92.03}\%$\\
   \bottomrule
   \end{tabular}
 \end{table}
-最后，我们对BERT-co-interactive编码层做了改进，引入了知识图谱，对比实验结果如表\ref{tab:kbjieguo}所示。
-
+最后，我们对BERT-co-interactive编码层做了改进，引入了知识图谱，对比实验结果如表\ref{tab:kbjieguo}所示，
+可以发现，知识库的引入能够给模型性能带来提升。短文本输入做为信息源相对较模糊，它没有足够的上下文信息，
+从外部知识源中检索知识，将概念性信息视为一种知识传入神经网络，可以增强短文本的语义表示。
+但是四项指标的提升并不明显，可能是因为测试集数量有限，其中并没有太多需要引入外部知识的测试样例。
 
   \section{本章小结}
   本章介绍了跨界服务领域数据集的构建，对数据集的预处理划分和实验结果的评价指标，
