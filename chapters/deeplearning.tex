@@ -22,9 +22,10 @@
   \end{figure}
 
 \subsection{算法描述}
-基于词向量模型的深度学习语义理解算法，首先将用户输入的句子利用分词工具转化为词语序列，再用word2vec将词语向量化，
-固定句子长度后，得到结构化的表示形式x=[$x_{1}$,$x_{2}$,\dots,$x_{T}$]输入网络中，流程如图\ref{fig:questiondesc}所示。
-首先利用服务分类器得到系统内与用户意图相匹配的服务，再通过接口分类器和参数提取器分别做文本分类和语义槽填充处理，最后将三项任务得到
+基于词向量模型的深度学习语义理解算法，首先将用户输入的句子利用分词工具转化为词语序列，再用word2vec模型将词语向量化，
+固定句子长度后，得到句子结构化的表示形式x=[$x_{1}$,$x_{2}$,\dots,$x_{T}$]输入网络中，流程如图\ref{fig:questiondesc}所示。
+首先利用服务分类器得到系统内与用户意图相匹配的服务，再通过接口分类器和参数提取器分别做文本分类获取该服务下接口名和
+语义槽填充处理获取服务调用时必要的参数，最后将三项任务得到
 的结果提交至服务执行引擎做服务调用，算法详细描述如表\ref{tab:suanfa1}。
 
 \begin{table}[htb]
@@ -54,19 +55,37 @@ iterations = M 和每一批的样本数 batchsize、迭代次数 epoch = N 和�
 \end{table}
 
 \begin{algorithm}
-  \caption{把猪八戒放进冰箱}
+  \caption{基于词向量模型的深度学习语义理解算法}
   \label{alg:put-into-refri}
   \begin{algorithmic}[1]
-  \Require N头动物，不知道是不是猪八戒  \Comment{我是注释} 
-  \Ensure 你造吗，这个程序木有输出，想怎样？
-  \State 先热热身:)
-  \For{$i=1,\dots ,N$} \Comment{我是个For循环}
-  \If {是猪八戒}
-    \State 打开冰箱门，把第$i$个放进冰箱，关上冰箱门
-  \Else 
-    \State 下一个
-  \EndIf
-  \EndFor
+  \Require $L_0$=\{($S_i$，$y_i^d$，$y_i^i$，$y_i^s$)\}，i $\in$ [1,n]   
+  \Ensure $Model_{service}$，$Model_{interface}$，$Model_{}$\\
+  % \State 先热热身:)
+  % \For{$i=1,\dots ,N$} \Comment{我是个For循环}
+  % \If {是猪八戒}
+  %   \State 打开冰箱门，把第$i$个放进冰箱，关上冰箱门
+  % \Else 
+  %   \State 下一个
+  % \EndIf
+  % \EndFor\\
+  % \textbf{训练过程描述:}
+  模型在训练时，输入的$S_i$为有用户意图的语句，经过分词和向量化
+处理后得到$E_i=(e_1,e_2,\dots,e_T)$,T为词语个数。模型参数初始化、批处理的数量
+iterations = M 和每一批的样本数 batchsize、迭代次数 epoch = N 和当前迭代次数 i = 0\\
+\textbf{while} i < N or 模型的性能达到终止条件 \textbf{do}\\
+\qquad \qquad \textbf{for} j = 1,\dots ,M \textbf{do}\\
+\qquad \qquad \qquad \qquad 随机抽取 batchsize 个训练集数据，前向传输在当前网络权值和输入下网络的输出\\
+\qquad \qquad \qquad \qquad 反向传输调整模型参数\\
+\qquad \qquad \textbf{end for}\\
+\qquad \qquad 计算损失 Loss，更新梯度和模型的参数\\
+\textbf{end while}\\
+用训练好的领域分类模型对测试样本进行预测，加载训练好的相应领域的意图识别模型
+和语义槽填充模型，对意图和语义槽进行预测，计算准确率 Accuracy、损失 Loss
+  \State 使用结巴分词工具将用户输入处理为词序列，将词序列输入训练好的模型中
+  \State 利用训练好的$Model_{service}$预测得到与用户意图匹配的服务类型
+  \State 利用训练好的$Model_{interface}$预测得到与用户意图匹配的接口类型
+  \State 利用训练好的$Model_{slot}$预测得到服务调用时需要的参数信息
+  \State 返回调用结果
   \end{algorithmic}
   \end{algorithm}
 
@@ -99,10 +118,10 @@ iterations = M 和每一批的样本数 batchsize、迭代次数 epoch = N 和�
 
 \section{基于ATT-CLSTM的服务分类模型}
 实现服务智能调用的第一步要根据用户意图匹配相应的服务，这可以被转化为文本分类问题。
-LSTM
+LSTM\cite{hochreiter1997long}
 是一种特殊的RNN，能够学习长期依赖关系，理解关键字出现的顺序，擅长处理文本序列的问题，同时，
 它通过增加门控机制来过滤信息，解决了长距离依赖的问题。 另一方面，在某种程度上也避免了梯度消失和梯度爆炸的问题。
-CNN
+CNN\cite{lecun1995convolutional}
 多用于图像领域，由于卷积核的存在，能够提取出词与词之间的隐藏的语义信息，捕获局部相关性。
 尽管CNN可以在许多任务中很好地表现，但它最大问题之一是卷积核大小的在训练时固定，不具有很好的泛化能力。一方面，无法对更长的序列信息进行建模，
 另一方面，超参数卷积核大小的调整也增加了工作量，池化层的处理也会丢失了部分结构性信息，因此很难在文本中发现复杂的模式。
@@ -289,7 +308,7 @@ K(p, q)=\max (0,1-|p-q|)
 因此单纯依赖结巴分词工具分词以后获取输入序列信息使任务存在瓶颈，需要引入其他的embedding手段来降低分词错误带来的干扰，
 我们选择在本模型中加入字符级的编码。
 对于许多序列标记任务，访问过去（左）和将来（右）上下文都是有帮助的。但是，LSTM的隐藏状态$h_t$仅从过去获取信息，对右侧数据一无所知。 
-双向LSTM（BLSTM）基本思想是将每个词向前和向后编码为两个单独的隐藏状态，以分别捕获过去和将来的信息，
+双向LSTM（BLSTM）\cite{chen2017improving}基本思想是将每个词向前和向后编码为两个单独的隐藏状态，以分别捕获过去和将来的信息，
 然后将两个隐藏状态连接起来以形成最终输出,因此本模型特征提取部分主要依赖BLSTM。
 同时我们选择条件随机场作为解码器，CRF考虑邻域标记之间的相关性，并针对给定输入语句联合解码得到最佳标记链。
 综上所述，本节采用引入字向量的BLSTM-ATT-CRF模型\ref{fig:blstm-att-crf}解决参数填充问题，下面将详细介绍该模型：
