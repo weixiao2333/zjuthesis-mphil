@@ -1,5 +1,28 @@
 \begin{englishabstract}
+The cross-border service network can break through the traditional organization, business and domain boundaries, 
+and has become the main tool to promote cross-enterprise, cross-domain and cross-industry cooperation. 
+However, the cross-border service network has a wide variety and huge number of internal services,
+users have to spend a lot of cost in service retrieval when facing such a service. 
+Therefore, how to improve the user's retrieval service experience becomes a problem. With the help of man-machine dialogue, 
+this paper introduces an intelligent service invocation engine into the cross-border service network system. 
+The engine can identify? the matching service within the system according to the sentence passed in by the user
+and extract the necessary parameters for the service call from the sentence to complete the call and return the result. 
+The core of the engine is semantic understanding model. Its performance is an important criterion to measure the degree of engine intelligence, 
+and it also directly affects subsequent service calls. At present, Chinese semantic understanding tasks have many challenges, 
+such as lack of sufficient data sets for specific downstream tasks, vague user expression intentions, polysemous words, etc. 
+At the same time, semantic understanding is the cornerstone of natural language processing, so its research has great significance and application prospects. 
 
+In view of the lack of Chinese corpus in the field of cross-border services, 
+this paper builds a semantic understanding data set in the field of cross-border services based on the public data set with the help of search engines and artificial supplements by members of the research team. 
+The expanded data set contains 8 service categories, and each corpus contains corresponding service category, 
+interface category and semantic slot annotations. At the same time, 
+this paper proposes an end-to-end interactive joint recognition model, 
+introducing bert as a pre-training model and a knowledge base to enhance the semantics of short text input.
+we do control experiments with other models to verify the feasibility and superiority of the model,
+Among them, the best-performing bert-co-interactive model's Sentence Acc reached 91.47\%. 
+In order to apply the algorithm to practice, 
+relying on the prototype system JTangYdrail of the sub-project "Cross-border Service Integration Methods and Support Carriers" of the National Key Research and Development Program "Modern Service Industry Common Key Technology Research and Development and Application Demonstration", 
+The system architecture of service intelligent call engine was designed,which allows the engine to be integrated with the existing platform.
 
 \englishkeywords{Natural Language Understanding,Text Classification, Slot Filling, Intent Detection,BERT}
 \end{englishabstract}

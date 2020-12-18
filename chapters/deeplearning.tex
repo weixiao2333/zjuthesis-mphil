@@ -26,50 +26,41 @@
 固定句子长度后，得到句子结构化的表示形式x=[$x_{1}$,$x_{2}$,\dots,$x_{T}$]输入网络中，流程如图\ref{fig:questiondesc}所示。
 首先利用服务分类器得到系统内与用户意图相匹配的服务，再通过接口分类器和参数提取器分别做文本分类获取该服务下接口名和
 语义槽填充处理获取服务调用时必要的参数，最后将三项任务得到
-的结果提交至服务执行引擎做服务调用，算法详细描述如表\ref{tab:suanfa1}。
+的结果提交至服务执行引擎做服务调用，算法详细描述如算法\ref{alg:suanfa1}。
 
-\begin{table}[htb]
-  \centering
-  \caption{基于词向量模型的深度学习语义理解算法描述}
-  \label{tab:suanfa1}
-\begin{tabular}{p{150mm}}
-\toprule
-\textbf{算法1:}基于词向量模型的深度学习语义理解算法\\
-\textbf{输入:} $L_0$=\{($S_i$，$y_i^d$，$y_i^i$，$y_i^s$)\}，i $\in$ [1,n]\\
-\textbf{输出:} $Model_{service}$，$Model_{interface}$，$Model_{slot}$\\
-\hline
-\textbf{过程描述:}模型在训练时，输入的$S_i$为有用户意图的语句，经过分词和向量化
-处理后得到$E_i=(e_1,e_2,\dots,e_T)$,T为词语个数。模型参数初始化、批处理的数量
-iterations = M 和每一批的样本数 batchsize、迭代次数 epoch = N 和当前迭代次数 i = 0\\
-\textbf{while} i < N or 模型的性能达到终止条件 \textbf{do}\\
-\qquad \qquad \textbf{for} j = 1,\dots ,M \textbf{do}\\
-\qquad \qquad \qquad \qquad 随机抽取 batchsize 个训练集数据，前向传输在当前网络权值和输入下网络的输出\\
-\qquad \qquad \qquad \qquad 反向传输调整模型参数\\
-\qquad \qquad \textbf{end for}\\
-\qquad \qquad 计算损失 Loss，更新梯度和模型的参数\\
-\textbf{end while}\\
-用训练好的领域分类模型对测试样本进行预测，加载训练好的相应领域的意图识别模型
-和语义槽填充模型，对意图和语义槽进行预测，计算准确率 Accuracy、损失 Loss\\
-\bottomrule
-\end{tabular}
-\end{table}
+% \begin{table}[htb]
+%   \centering
+%   \caption{基于词向量模型的深度学习语义理解算法描述}
+%   \label{tab:suanfa1}
+% \begin{tabular}{p{150mm}}
+% \toprule
+% \textbf{算法1:}基于词向量模型的深度学习语义理解算法\\
+% \textbf{输入:} $L_0$=\{($S_i$，$y_i^d$，$y_i^i$，$y_i^s$)\}，i $\in$ [1,n]\\
+% \textbf{输出:} $Model_{service}$，$Model_{interface}$，$Model_{slot}$\\
+% \hline
+% \textbf{过程描述:}模型在训练时，输入的$S_i$为有用户意图的语句，经过分词和向量化
+% 处理后得到$E_i=(e_1,e_2,\dots,e_T)$,T为词语个数。模型参数初始化、批处理的数量
+% iterations = M 和每一批的样本数 batchsize、迭代次数 epoch = N 和当前迭代次数 i = 0\\
+% \textbf{while} i < N or 模型的性能达到终止条件 \textbf{do}\\
+% \qquad \qquad \textbf{for} j = 1,\dots ,M \textbf{do}\\
+% \qquad \qquad \qquad \qquad 随机抽取 batchsize 个训练集数据，前向传输在当前网络权值和输入下网络的输出\\
+% \qquad \qquad \qquad \qquad 反向传输调整模型参数\\
+% \qquad \qquad \textbf{end for}\\
+% \qquad \qquad 计算损失 Loss，更新梯度和模型的参数\\
+% \textbf{end while}\\
+% 用训练好的领域分类模型对测试样本进行预测，加载训练好的相应领域的意图识别模型
+% 和语义槽填充模型，对意图和语义槽进行预测，计算准确率 Accuracy、损失 Loss\\
+% \bottomrule
+% \end{tabular}
+% \end{table}
 
 \begin{algorithm}
-  \caption{基于词向量模型的深度学习语义理解算法}
-  \label{alg:put-into-refri}
+  \caption{基于词向量模型的深度学习语义理解}
+  \label{alg:suanfa1}
   \begin{algorithmic}[1]
   \Require $L_0$=\{($S_i$，$y_i^d$，$y_i^i$，$y_i^s$)\}，i $\in$ [1,n]   
   \Ensure $Model_{service}$，$Model_{interface}$，$Model_{}$\\
-  % \State 先热热身:)
-  % \For{$i=1,\dots ,N$} \Comment{我是个For循环}
-  % \If {是猪八戒}
-  %   \State 打开冰箱门，把第$i$个放进冰箱，关上冰箱门
-  % \Else 
-  %   \State 下一个
-  % \EndIf
-  % \EndFor\\
-  % \textbf{训练过程描述:}
-  模型在训练时，输入的$S_i$为有用户意图的语句，经过分词和向量化
+模型在训练时，输入的$S_i$为有用户意图的语句，经过分词和向量化
 处理后得到$E_i=(e_1,e_2,\dots,e_T)$,T为词语个数。模型参数初始化、批处理的数量
 iterations = M 和每一批的样本数 batchsize、迭代次数 epoch = N 和当前迭代次数 i = 0\\
 \textbf{while} i < N or 模型的性能达到终止条件 \textbf{do}\\
@@ -81,11 +72,12 @@ iterations = M 和每一批的样本数 batchsize、迭代次数 epoch = N 和�
 \textbf{end while}\\
 用训练好的领域分类模型对测试样本进行预测，加载训练好的相应领域的意图识别模型
 和语义槽填充模型，对意图和语义槽进行预测，计算准确率 Accuracy、损失 Loss
-  \State 使用结巴分词工具将用户输入处理为词序列，将词序列输入训练好的模型中
+  \State 过滤输入语句中停用词等无效信息，使用结巴分词工具将用户输入处理为词序列，将词序列输入训练好的模型中
   \State 利用训练好的$Model_{service}$预测得到与用户意图匹配的服务类型
   \State 利用训练好的$Model_{interface}$预测得到与用户意图匹配的接口类型
   \State 利用训练好的$Model_{slot}$预测得到服务调用时需要的参数信息
-  \State 返回调用结果
+  \State 将模型预测的服务，接口，参数等信息传入智能服务调用引擎
+  \State 返回服务调用结果
   \end{algorithmic}
   \end{algorithm}
 
@@ -105,9 +97,10 @@ iterations = M 和每一批的样本数 batchsize、迭代次数 epoch = N 和�
 会降低模型准确率，因此本文利用网上已有的中文停用词词典在结巴分词工具处理前对用户语句做了停用词过滤。
 
 \subsection{标签向量化}
-服务分类和接口分类均属于多类别分类问题，训练样本的标签均采用one-hot编码，本文筛选了跨界服务平台中用户使用较多的八类服务，接口类型为这八类
-服务下所有接口的合计，如query,order,play等。对于参数提取任务，像序列标注任务一样，使用BIO标注方式标记参数语义槽，根据类型不同分为
-“B-X”、“I-X”和“O”，如图\ref{fig:yuyicao}所示。
+服务分类和接口分类均可以看作多类别分类问题，训练样本的标签均采用one-hot编码，本文筛选了跨界服务平台中用户使用较多的八类服务，接口类型为这八类
+服务下所有接口的合集，如query,order,play等。模型通过编码层对输入进行特征提取，最后通过softmax层预测结果，结果向量概率最大的维度对应的即为预测的服务类型和接口类型。
+对于参数提取任务，像序列标注任务一样，使用BIO标注方式标记参数语义槽，根据类型不同分为
+“B-X”、“I-X”和“O”，如图\ref{fig:yuyicao}所示。本章选择条件随机场作为解码器，CRF考虑邻域标记之间的相关性，并针对给定输入语句联合解码得到最佳标记链。
 \begin{figure}[htbp]
   \centering
   \includegraphics[scale=0.5]{./images/yuyicao.png}
@@ -115,7 +108,7 @@ iterations = M 和每一批的样本数 batchsize、迭代次数 epoch = N 和�
   \label{fig:yuyicao}
 \end{figure}
 
-
+% \vspace{-1em}
 \section{基于ATT-CLSTM的服务分类模型}
 实现服务智能调用的第一步要根据用户意图匹配相应的服务，这可以被转化为文本分类问题。
 LSTM\cite{hochreiter1997long}
