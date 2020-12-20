@@ -28,16 +28,16 @@ Skip-Gram模型：给定一个处在句子中单词，Skip-gram模型的训练�
 而skip-gram是用当前词来预测上下文词，训练过程中使用梯度下降法不断的调整当前词的词向量。
 
 \begin{figure}[htbp]
-  % \centering
+  \centering
   % \hspace{-7mm}
   \subfloat[CBOW]{
-  \includegraphics[width=8cm]{./images/CBOW.jpg}
+  \includegraphics[width=6cm]{./images/CBOW.jpg}
   \label{fig:CBOW}
   }
   % \hspace{5pt}
     % \hspace{+5mm}
   \subfloat[skip-gram]{
-  \includegraphics[width=6cm]{./images/skip.jpg}
+  \includegraphics[width=4cm]{./images/skip.jpg}
   \label{fig:skip}
   }
   \caption{两种词向量模型\cite{mikolov2013distributed}}
@@ -105,7 +105,7 @@ LSTM也具有这种链状结构，但是重复模块具有与传统rnn不同的�
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[scale=0.8]{./images/LSTM.jpg}
+  \includegraphics[scale=0.5]{./images/LSTM.jpg}
   \caption{LSTM单元模块\cite{sundermeyer2012lstm}}
   \label{fig:LSTM}
 \end{figure}
@@ -178,7 +178,7 @@ Transformer的提出者用BERT验证了这一点。
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=8cm]{./images/transformer.png}
+  \includegraphics[width=6cm]{./images/transformer.png}
   \caption{transformer架构图\cite{vaswani2017attention}}
   \label{fig:transformer}
 \end{figure}

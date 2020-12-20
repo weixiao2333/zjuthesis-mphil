@@ -400,9 +400,16 @@ co-interactive联合识别模型则在三项任务中都有超过传统深度学
 与传统的DNN相比，引入知识模型能够基于观察力（机器的训练数据）和现有知识做出决策。
 如表中第三行所示，我们对BERT-kb-co-interactive中C-T attention模块做了消融实验，发现删除C-T attention模块后实验指标有所下降，
 这是因为失去C-T attention模块的模型在引入知识概念是不会考虑概念是否与文本相关，很可能会带来不相关的概率从而造成数据噪声影响了模型的判断。
+如图\ref{fig:ctattention}所示，以文本“播放林俊杰的江南”为例，我们将C-T attention模块的权值进行了可视化，
+可以看到模型成功将注意力集中在歌手和歌名上，避开了噪声概念，这正是引入C-T attention的初衷。
 此外，由于注意力机制，我们的模型能够更加关注重要的知识
 但是四项指标的提升并不明显，可能是因为测试集数量有限，其中并没有太多需要引入外部知识的测试样例。
-
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[scale=0.3]{./images/ctattention.png}
+  \caption{C-T attention权值可视化}
+  \label{fig:ctattention}
+\end{figure}
 
   \section{本章小结}
   本章介绍了跨界服务领域数据集的构建，对数据集的预处理划分和实验结果的评价指标，
