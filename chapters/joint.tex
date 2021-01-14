@@ -310,6 +310,12 @@ $\mathbf{y}^{I}$是输出的服务类别的分布，$\mathbf{O}^{I}$是预测的
   其中$\alpha,\beta$为超参数。
 
 \section{结合bert的模型}
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=16cm]{./images/bertInput.jpg}
+  \caption{bert对输入的处理}
+  \label{fig:bertInput}
+\end{figure}
 
 大量研究表明，语言模型预训练对于学习通用语言表示有很大帮助，作为最新的nlp预训练模型，BERT在许多语言理解任务中均取得了惊人的成绩。
 bert预训练模型的使用可以避免从头开始训练新模型，它通过利用大量非标注数据来学习语言的通用表示形式。
@@ -320,12 +326,7 @@ bert预训练模型的使用可以避免从头开始训练新模型，它通过�
 BERT编码器的输入是一系列token，这些token首先被转换为矢量，然后在神经网络中进行处理。
 但是在开始处理之前，BERT需要对输入进行处理并用一些额外的元数据修饰，
 因此，引入bert模型以后我们不再需要结巴分词工具，直接将句子按字向量序列输入bert模型编码，bert对输入的处理如图\ref{fig:bertInput}。
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[width=16cm]{./images/bertInput.jpg}
-  \caption{bert对输入的处理}
-  \label{fig:bertInput}
-\end{figure}
+
 
 \subsection{bert-base联合识别模型}
 首先，我们提出最简版的bert-base模型，
@@ -398,19 +399,15 @@ y_{n}^{s}=\operatorname{softmax}\left(\mathbf{W}^{s} \boldsymbol{h}_{n}+\boldsym
 % 短文本编码模块通过自我注意对短文本进行编码，并产生短文本表示q。
 % 知识编码模块对概念向量应用两种注意机制，以获得概念表示p。
 % 接下来，我们将p和q连接起来以融合短文本和概念信息，这些信息将被馈送到完全连接的层中。
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[width=13cm]{./images/kg.png}
-  \caption{引入知识图谱的编码层}
-  \label{fig:kg}
-\end{figure}
+
 （1）知识检索
 
 该模块的目的是从知识库中检索相关知识，语义关系主要选用isA，isPropertyOf两种，给定一个简短的文本，希望找到与其相关的概念集C。
 可通过两个主要步骤来实现此目的：实体链接和概念化。
 实体链接是NLP中的一项重要任务，用于识别短文本中提到的实体\cite{moro2014entity}，
 本文通过利用现有的实体链接解决方案，获得了短文本的实体集E\cite{chen2018short}。
-然后，对于每个实体e $\in$ E，我们通过概念化从现有知识库CN-Probase中获取其概念信息。
+然后，对于每个实体e $\in$ E，我们通过概念化从现有知识库CN-Probase中获取其概念信息，
+CN-Probase是公开域的知识库，课题组引入了跨界服务相关的知识对其进行了扩展，本文使用的是扩展后的知识库。
 例如，给定一个用户输入文本“播放林俊杰的江南”，通过实体链接技术可获得实体集E = {林俊杰，江南}。
 然后，我们将实体集E概念化，并从CN-Probase获得其概念集C = {人名，歌手，地理，诗词，歌名}。
 
@@ -427,6 +424,12 @@ f采用非线性激活函数双曲线正切变换，W和b是训练参数。
 \begin{equation}
 p=\sum_{i=1}^{m} a_{i} c_{i}
 \end{equation}
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=13cm]{./images/kg.png}
+  \caption{引入知识图谱的编码层}
+  \label{fig:kg}
+\end{figure}
 最后通过加权求和得到knowledge encoding的向量表示p，将p和bert输出的矩阵拼接得到引入知识的编码结果，
 后续会传入co-interactive层，其结构已经在之前介绍过，不再赘述。
 
