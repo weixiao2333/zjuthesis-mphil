@@ -697,7 +697,7 @@
 \else
   \@restonecolfalse
 \fi
-\chapter*{\listfigurename}%
+\chapter*{图目录}%
 \@mkboth{\MakeUppercase\listfigurename}{\MakeUppercase\listfigurename}%
 \@starttoc{lof}%
 \if@restonecol\twocolumn\fi
@@ -709,7 +709,7 @@
 \else
   \@restonecolfalse
 \fi
-\chapter*{\listtablename}%
+\chapter*{表目录}%
 \@mkboth{\MakeUppercase\listtablename}{\MakeUppercase\listtablename}%
 \@starttoc{lot}%
 \if@restonecol\twocolumn\fi
