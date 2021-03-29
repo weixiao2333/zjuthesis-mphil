@@ -6,29 +6,6 @@ BERT使用双向transformer网络结构来预训练语言模型，着眼于单�
 对语义消歧大有裨益，可以通过附加输出层对bert进行微调来完成模型构建。
 在本章，针对跨界服务网络内部数据集有限的现状，我们希望利用bert预训练学到的语义编码能力，来提升模型的准确率。
 
-\begin{algorithm}
-  \caption{引入预训练模型的联合识别}
-  \label{alg:suanfa2}
-  \begin{algorithmic}[1]
-  \Require $L_0$=\{($S_i$，$y_i^d$，$y_i^i$，$y_i^s$)\}，i $\in$ [1,n]
-  \Ensure $Model_{joint}$\\
-模型在训练时，输入的$S_i$为有用户意图的语句，直接将句子中每一个字按照
-字向量输入进bert模型编码。模型参数初始化、批处理的数量
-iterations = M 和每一批的样本数 batchsize、迭代次数 epoch = N 和当前迭代次数 i = 0\\
-\textbf{while} i < N or 模型的性能达到终止条件 \textbf{do}\\
-\qquad \qquad \textbf{for} j = 1,\dots ,M \textbf{do}\\
-\qquad \qquad \qquad \qquad 随机抽取 batchsize 个训练集数据，前向传输在当前网络权值和输入下网络的输出\\
-\qquad \qquad \qquad \qquad 反向传输调整模型参数，对bert参数fine-tuning\\
-\qquad \qquad \textbf{end for}\\
-\qquad \qquad 计算联合损失 Loss，更新梯度和模型的参数，对bert参数fine-tuning\\
-\textbf{end while}\\
-用训练好的联合识别模型对测试样本进行预测，计算准确率 Accuracy、损失 Loss
-  \State 将用户语句输入神经网络，利用训练好的$Model_{joint}$预测得到与用户意图匹配的服务类型，接口类型和参数信息
-  \State 将模型预测的服务，接口，参数等信息传入智能服务调用引擎
-  \State 返回服务调用结果  
-  \end{algorithmic}
-  \end{algorithm}
-
 在智能服务调用的语义理解任务中，服务分类，接口分类和参数提取三者具有强相关的特性，对于系统内某一确定的服务，其接口和对应参数的全集也随之确定，
 例如对于系统内部的天气服务，其接口仅有query类型，语义槽也是确定的city，date等，因此直觉上可见，可以显示利用任务之间的约束关系来提升模型的性能。
 我们尝试了将三者loss函数叠加的隐式联合建模、服务与接口分类向参数提取提供信息流的单向联合识别以及服务分类、接口分类、参数填充三者联合显式建模
@@ -72,6 +49,28 @@ Goo等提出了意图识别和语义槽填充的联合模型\cite{goo2018slot}�
 同时，和上一章一样，注意力机制被引入到模型中，在编码时提供精确的关注焦点。
 本节的模型着重于介绍如何通过引入参数提取门控机制来对服务分类，接口分类和服务参数填充之间进行显式关系建模。
 
+\begin{algorithm}
+  \caption{引入预训练模型的联合识别}
+  \label{alg:suanfa2}
+  \begin{algorithmic}[1]
+  \Require $L_0$=\{($S_i$，$y_i^d$，$y_i^i$，$y_i^s$)\}，i $\in$ [1,n]
+  \Ensure $Model_{joint}$\\
+模型在训练时，输入的$S_i$为有用户意图的语句，直接将句子中每一个字按照
+字向量输入进bert模型编码。Model parameter initialization, number of batches iterations = M
+, number of iterations epoch = N\\
+\textbf{while} k < N or The performance of the model reaches the end condition \textbf{do}\\
+\qquad \qquad \textbf{for} j = 1,\dots ,M \textbf{do}\\
+\qquad \qquad \qquad \qquad Randomly extract training set data, and forward the output of the network under the current network weight and input\\
+\qquad \qquad \qquad \qquad Backpropagation to adjust model parameters\\
+\qquad \qquad \textbf{end for}\\
+\qquad \qquad Calculate loss Loss, update gradient and model parameters\\
+\textbf{end while}\\
+Use the trained joint recognition model to predict the test sample and calculate the accuracy rate and loss
+  \State 将用户语句输入神经网络，利用训练好的$Model_{joint}$预测得到与用户意图匹配的服务类型，接口类型和参数信息
+  \State 将模型预测的服务，接口，参数等信息传入智能服务调用引擎
+  \State 返回服务调用结果  
+  \end{algorithmic}
+  \end{algorithm}
 
 如图\ref{fig:lianhe1}所示，设slot-oriented联合识别模型输入的词序列是x=[$x_{1}$,$x_{2}$,\dots,$x_{T}$],$x_{i}$经过双向LSTM处理后
 得到的结果是$\overleftarrow{\mathbf{h}}_{i}$和$\overrightarrow{\mathbf{h}}_{i}$，
