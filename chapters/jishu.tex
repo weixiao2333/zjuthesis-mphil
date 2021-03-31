@@ -247,7 +247,7 @@ BERT编码器的输入是一系列token，这些token首先被转换为矢量，
 \begin{figure}[htbp]
   \centering
   \includegraphics[scale=0.5]{./images/inputBert.jpg}
-  \caption{bert的输入处理\cite{devlin2018bert}}
+  \caption{BERT的输入处理\cite{devlin2018bert}}
   \label{fig:inputBert}
 \end{figure}
 
@@ -256,7 +256,7 @@ BERT不会尝试预测句子中的下一个单词，训练时使用以下两种�
 Masked LM (MLM)，
 随机掩盖输入中15％的单词（用[MASK]令牌代替），将处理好的序列输入模型，然后根据序列中其他未屏蔽单词提供的上下文信息预测被屏蔽的词，
 但是，这种掩盖方法存在一个问题，模型只会预测输入中存在的词，而我们希望模型尝试预测正确的token，而不管该token是否存在于输入中。
-要解决此问题，bert在训练时，对于被选中要被屏蔽的词，有80％按原方案被替换为令牌[MASK]，10％被替换为随机token，剩下10％保持不变。
+要解决此问题，BERT在训练时，对于被选中要被屏蔽的词，有80％按原方案被替换为令牌[MASK]，10％被替换为随机token，剩下10％保持不变。
 
 Next Sentence Prediction，
 为了理解两个句子之间的关系，BERT训练过程还进行了下一个句子预测，具有这种理解的预训练模型可以解决诸如回答问题之类的任务。
@@ -264,4 +264,4 @@ Next Sentence Prediction，
 
 \section{本章小结}
 本章介绍了智能服务调用语义理解任务需要用到的nlp相关技术，词向量技术包括CBOW和skip-gram两种，循环神经网络主要讨论了RNN和LSTM，
-介绍了近年来深度学习领域较为火热的注意力机制，最后讨论了最近在nlp领域的新技术transformer和预训练模型bert。
+介绍了近年来深度学习领域较为火热的注意力机制，最后讨论了最近在nlp领域的新技术transformer和预训练模型BERT。

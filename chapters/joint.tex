@@ -310,11 +310,11 @@ $\mathbf{y}^{I}$是输出的服务类别的分布，$\mathbf{O}^{I}$是预测的
   \end{equation}
   其中$\alpha,\beta$为超参数。
 
-\section{结合bert的模型}
+\section{结合BERT的模型}
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=16cm]{./images/bertInput.jpg}
-  \caption{bert对输入的处理}
+  \caption{BERT对输入的处理}
   \label{fig:bertInput}
 \end{figure}
 
@@ -326,23 +326,23 @@ bert预训练模型的使用可以避免从头开始训练新模型，它通过�
  H = 768 表示 Transformer 内部 包含 768 个隐含单元， A = 12 表示多头自注意力机制中自注意力机制个数为 12 个\cite{devlin2018bert}。
 BERT编码器的输入是一系列token，这些token首先被转换为矢量，然后在神经网络中进行处理。
 但是在开始处理之前，BERT需要对输入进行处理并用一些额外的元数据修饰，
-因此，引入bert模型以后我们不再需要结巴分词工具，直接将句子按字向量序列输入bert模型编码，bert对输入的处理如图\ref{fig:bertInput}。
+因此，引入BERT模型以后我们不再需要结巴分词工具，直接将句子按字向量序列输入BERT模型编码，BERT对输入的处理如图\ref{fig:bertInput}。
 
 
-\subsection{bert-base联合识别模型}
-Chen等提出了意图识别和语义槽填充的BERT联合模型\cite{chen2019bert}，受此启发，我们提出最简版的bert-base模型，
+\subsection{BERT-base联合识别模型}
+Chen等提出了意图识别和语义槽填充的BERT联合模型\cite{chen2019bert}，受此启发，我们提出最简版的BERT-base模型，
 将服务分类、接口分类和参数填充三个任务利用联合损失函数隐式的建模，本模型主要起对照组的作用，
 来验证引入bert是否能够给NLU带来增益，同时可以作为下一个模型的baseline，模型架构如图\ref{fig:bert-base}所示。
 
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=13cm]{./images/bert-base.jpg}
-  \caption{bert-base联合识别模型}
+  \caption{BERT-base联合识别模型}
   \label{fig:bert-base}
 \end{figure}
 
-模型结构非常清晰，将用户语句按字向量序列输入bert模型编码，得到bert的输出$\mathbf{H}$=[$h_{1}$,$h_{2}$,\dots,$h_{n}$]，
-我们取bert输出的第一个向量，也就是特殊token（[CLS]）的隐藏状态作为两项分类任务的输入传给softmax层:
+模型结构非常清晰，将用户语句按字向量序列输入BERT模型编码，得到BERT的输出$\mathbf{H}$=[$h_{1}$,$h_{2}$,\dots,$h_{n}$]，
+我们取BERT输出的第一个向量，也就是特殊token（[CLS]）的隐藏状态作为两项分类任务的输入传给softmax层:
 \begin{equation}
   y^{d}=\operatorname{softmax}\left(\mathbf{W}^{d} \boldsymbol{h}_{1}+\boldsymbol{b}^{d}\right)
 \end{equation}
@@ -359,10 +359,10 @@ y_{n}^{s}=\operatorname{softmax}\left(\mathbf{W}^{s} \boldsymbol{h}_{n}+\boldsym
   \end{equation}
   训练的目标是最大化正确标签的概率$p\left(y^{d},y^{i}, y^{s} \mid \boldsymbol{x}\right)$。
 
-\subsection{bert-co-interactive联合识别模型}
+\subsection{BERT-co-interactive联合识别模型}
 
-为在co-interactive联合识别模型中引入bert,将其共享编码层换成bert拼接在attention层之前\ref{fig:bert-joint}，模型其他结构与co-interactive模型
-一致不再赘述，bert部分的参数采用fine-tuning的方式更新。
+为在co-interactive联合识别模型中引入BERT,将其共享编码层换成BERT拼接在attention层之前\ref{fig:bert-joint}，模型其他结构与co-interactive模型
+一致不再赘述，BERT部分的参数采用fine-tuning的方式更新。
 
 
 % \section{结合ernie的模型}
@@ -382,7 +382,7 @@ y_{n}^{s}=\operatorname{softmax}\left(\mathbf{W}^{s} \boldsymbol{h}_{n}+\boldsym
 例如，在文本“查询苹果公司今日股价”中，我们会从KB获得苹果的“水果”和“手机”两个概念。显然，这里的“水果”并不是一个恰当的概念，这是由实体的歧义造成的。
 为了解决这个问题，衡量知识的重要性，受Chen等提出的引入知识的文本分类模型\cite{chen2019deep}之启发，我们使用C-T注意力机制（concept,text）来衡量短文本及其相应概念之间的语义相似性，
 从而在上例中模型会将更大的权重分配给概念“手机”，因为它在语义上与短文本更接近，而不是概念“水果”。
-借助概念性信息对短文本进行数据增强，与之前的方法不同，使模型像人类一样有了很多先验知识。如图\ref{fig:kg}所示，在bert-co-interactive联合识别模型
+借助概念性信息对短文本进行数据增强，与之前的方法不同，使模型像人类一样有了很多先验知识。如图\ref{fig:kg}所示，在BERT-co-interactive联合识别模型
 的基础上，本小节对其编码层进行了改进：
 
 % 我们引入注意力机制，并提出了具有知识动力注意的深层短文本分类（STCKA）。
@@ -436,4 +436,4 @@ p=\sum_{i=1}^{m} a_{i} c_{i}
 
 \section{本章小结}
 本章利用任务之间存在的强关联性，将服务分类、接口分类和参数填充三项任务做了联合识别，包括单向信息流的联合和交互式联合两种尝试，
-同时引入预训练模型bert对模型进行优化，在此基础上引入知识库丰富输入语句的语义信息，得到了不错的效果。
+同时引入预训练模型BERT对模型进行优化，在此基础上引入知识库丰富输入语句的语义信息，得到了不错的效果。
